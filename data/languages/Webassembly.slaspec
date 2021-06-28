@@ -24,7 +24,7 @@ define register offset=0x50 size=1 [ rCBAR rCBR rBBR ];
 define register offset=0xf0 size=4   contextreg;
 
 define context contextreg
-
+	indent_lvl = (0, 7)
 ;
 
 # Flag bits (?? manual is very confusing - could be typos!)

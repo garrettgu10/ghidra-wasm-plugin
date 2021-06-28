@@ -53,41 +53,60 @@ memoffset: "offset="^ULeb128 is ULeb128 {
 
 ################################################################
 
-:unreachable is opc=0x00 {
+indent: "" is indent_lvl=0 {}
+indent: " . "^indent is indent [ indent_lvl = indent_lvl - 1; ]{}
+
+# This outputs one less indentation than indent, use this when the indent_lvl is increased by the current instruction
+inc_indent: "" is indent_lvl=1 | indent_lvl=0 {}
+inc_indent: " . "^inc_indent is inc_indent [ indent_lvl = indent_lvl-1; ]{}
+
+@define INC_INDENT "inc_indent [ indent_lvl = indent_lvl + 1; globalset(inst_next, indent_lvl); ]"
+@define DEC_INDENT "indent [ indent_lvl = indent_lvl - 1; globalset(inst_next, indent_lvl); ]"
+
+:""^indent^"unreachable" is opc=0x00; indent {
 	trap();
 }
 
-:nop is opc=0x01 {}
+:""^indent^"nop" is opc=0x01; indent {}
 
 #TODO: 0x02-0x11
 
 #TODO: 0xd0-0xd2
 
-:drop is opc=0x1a unimpl
-:select is opc=0x1b unimpl
+:""^indent^"drop" is opc=0x1a; indent unimpl
+:""^indent^"select" is opc=0x1b; indent unimpl
 
 #TODO: select t* 0x1c
 
-:local.get localidx is opc=0x20; localidx unimpl
-:local.set localidx is opc=0x21; localidx unimpl
-:local.tee localidx is opc=0x22; localidx unimpl
-:global.get globalidx is opc=0x23; globalidx {
+:""^indent^"local.get" localidx is opc=0x20; localidx; indent unimpl
+:""^indent^"local.set" localidx is opc=0x21; localidx; indent unimpl
+:""^indent^"local.tee" localidx is opc=0x22; localidx; indent unimpl
+:""^indent^"global.get" globalidx is opc=0x23; globalidx; indent {
 	val:8 = get_global(globalidx);
 	push64(val);
 }
-:global.set globalidx is opc=0x24; globalidx unimpl
+:""^indent^"global.set" globalidx is opc=0x24; globalidx; indent unimpl
 
 #TODO: table instructions
-
-:i32.load { memalign memoffset } is opc=0x28; memalign; memoffset unimpl
-#TODO: more mem instrs
-
-:i32.const ULeb128 is opc=0x41; ULeb128 {
+:""^indent^"i32.const" ULeb128 is opc=0x41; ULeb128; indent {
 	val:4 = ULeb128:4;
 	push32(val);
 }
 
-:i64.const ULeb128 is opc=0x42; ULeb128 {
+:""^indent^"i64.const" ULeb128 is opc=0x42; ULeb128; indent {
 	val:8 = ULeb128:8;
 	push64(val);
 }
+
+:""^inc_indent^"if" "blocktype="^ULeb128 is opc=0x04; ULeb128; $(INC_INDENT) unimpl
+:""^inc_indent^"block" "blocktype="^ULeb128 is opc=0x02; ULeb128; $(INC_INDENT) unimpl
+
+:""^indent^"br" ULeb128 is opc=0x0c; ULeb128; indent unimpl
+:""^indent^"br_if" ULeb128 is opc=0x0d; ULeb128; indent unimpl
+
+@include "BasicOps.sinc"
+
+#TODO: 0x3f
+
+:""^indent^"end" is opc=0x0b; $(DEC_INDENT) unimpl
+:""^indent^"return" is opc=0x0f; indent unimpl
