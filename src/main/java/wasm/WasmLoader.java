@@ -36,6 +36,7 @@ import ghidra.program.model.data.DataType;
 import ghidra.program.model.data.DataTypeConflictException;
 import ghidra.program.model.data.DataUtilities;
 import ghidra.program.model.data.DataUtilities.ClearDataMode;
+import ghidra.program.model.lang.LanguageCompilerSpecPair;
 import ghidra.program.model.listing.Data;
 import ghidra.program.model.listing.Listing;
 import ghidra.program.model.listing.Program;
@@ -72,22 +73,17 @@ public class WasmLoader extends AbstractLibrarySupportLoader {
 	@Override
 	public Collection<LoadSpec> findSupportedLoadSpecs(ByteProvider provider) throws IOException {
 		List<LoadSpec> loadSpecs = new ArrayList<>();
+
 		BinaryReader reader = new BinaryReader(provider, true);
-			WasmHeader header = new WasmHeader(reader);
-			if (WasmConstants.WASM_MAGIC_BASE.equals(new String(header.getMagic()))) {
-				List<QueryResult> queries =
-					QueryOpinionService.query(getName(), WasmConstants.MACHINE, null);
-				for (QueryResult result : queries) {
-					loadSpecs.add(new LoadSpec(this, 0, result));
-					loadSpecs.add(new LoadSpec(this, 0, result));
-					loadSpecs.add(new LoadSpec(this, 0, result));
-					loadSpecs.add(new LoadSpec(this, 0, result));
-					loadSpecs.add(new LoadSpec(this, 0, result));
-				}
-			}
+		WasmHeader header = new WasmHeader(reader);
+		
+		if(WasmConstants.WASM_MAGIC_BASE.equals(new String(header.getMagic()))) {
+			loadSpecs.add(new LoadSpec(this, 0,
+					new LanguageCompilerSpecPair("Wasm:LE:32:default", "default"), true));
+		}
+
 		return loadSpecs;
 	}
-	
 	
 	private void createMethodByteCodeBlock(Program program, long length, TaskMonitor monitor) throws Exception {
 		Address address = Utils.toAddr( program, Utils.METHOD_ADDRESS );
@@ -199,7 +195,8 @@ public class WasmLoader extends AbstractLibrarySupportLoader {
 						//The function index space begins with an index for each imported function, 
 						//in the order the imports appear in the Import Section, if present, 
 						//followed by an index for each function in the Function Section, 
-						int imports_offset = ((WasmImportSection)module.getSection(WasmSectionId.SEC_IMPORT).getPayload()).getCount();
+						WasmSection imports = module.getSection(WasmSectionId.SEC_IMPORT);
+						int imports_offset = imports == null? 0 : ((WasmImportSection)imports.getPayload()).getCount();
 						program.getFunctionManager().createFunction(getMethodName((WasmExportSection)module.getSection(WasmSectionId.SEC_EXPORT).getPayload(), i + imports_offset), methodAddress, new AddressSet(methodAddress, methodend), SourceType.ANALYSIS);
 						lookupOffset += 4;
 					}

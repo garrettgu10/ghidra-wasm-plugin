@@ -36,22 +36,6 @@ import ghidra.util.exception.DuplicateNameException;
 public final class Leb128 implements StructConverter {
 	private Leb128() {
 	}
-
-	/**
-	 * Gets the number of bytes in the unsigned LEB128 encoding of the given value.
-	 * 
-	 * @param value
-	 *            the value in question
-	 * @return its write size, in bytes
-	 * @throws IOException 
-	 */
-	
-	public static int read_int(BinaryReader reader) throws IOException {
-		int tmp= Leb128.readUnsignedLeb128( reader.readByteArray( reader.getPointerIndex( ), 5 ) );
-		int len = Leb128.unsignedLeb128Size(tmp);
-		reader.readNextByteArray(len);// consume leb...
-		return tmp;
-	}
 	
 	public static int unsignedLeb128Size( int value ) {
 		// TODO: This could be much cleverer.

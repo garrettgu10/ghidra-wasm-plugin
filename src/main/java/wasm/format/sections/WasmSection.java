@@ -22,7 +22,7 @@ public class WasmSection implements StructConverter {
 	private long payload_offset;
 
 	public enum WasmSectionId {
-		SEC_UNKNOWN,
+		SEC_CUSTOM,
 		SEC_TYPE,
 		SEC_IMPORT,
 		SEC_FUNCTION,
@@ -36,10 +36,10 @@ public class WasmSection implements StructConverter {
 		SEC_DATA
 	}
 	
-	private static WasmPayload sectionsFactory(BinaryReader reader, WasmSectionId id) throws IOException {
+	private static WasmPayload sectionsFactory(BinaryReader reader, WasmSectionId id, Leb128 len) throws IOException {
 		switch (id) {
-			case SEC_UNKNOWN:
-				return null;
+			case SEC_CUSTOM:
+				return new WasmCustomSection(reader, len.getValue());
 			case SEC_TYPE:
 				return new WasmTypeSection(reader);
 			case SEC_IMPORT:
@@ -69,7 +69,7 @@ public class WasmSection implements StructConverter {
 	
 	public WasmSection(BinaryReader reader) throws IOException {
 		section_offset = reader.getPointerIndex();
-		this.id = WasmSectionId.values()[Leb128.read_int(reader)];
+		this.id = WasmSectionId.values()[new Leb128(reader).getValue()];
 
 		this.payload_len = new Leb128(reader);
 
@@ -77,7 +77,9 @@ public class WasmSection implements StructConverter {
 		
 		byte payload_buf[] = reader.readNextByteArray(this.payload_len.getValue());
 		
-		payload = WasmSection.sectionsFactory(new BinaryReader(new ByteArrayProvider(payload_buf), true), id);
+		System.out.println("id: " + this.id);
+		
+		payload = WasmSection.sectionsFactory(new BinaryReader(new ByteArrayProvider(payload_buf), true), id, this.payload_len);
 		section_size = reader.getPointerIndex() - section_offset;
 	}
 	

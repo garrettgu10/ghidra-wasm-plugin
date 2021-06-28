@@ -1,0 +1,44 @@
+define token opbyte (8)
+        topbit = (7, 7)
+        v0 = (0, 6)
+        v1 = (0, 6)
+        v2 = (0, 6)
+        v3 = (0, 6)
+        v4 = (0, 6)
+        v5 = (0, 6)
+        v6 = (0, 6)
+        v7 = (0, 6)
+        v8 = (0, 6)
+        v9 = (0, 6)
+;
+
+ULeb128: val is topbit = 0 & v0
+        [ val = 0 | v0 ; ]
+{ res:8 = val; export res; }
+ULeb128: val is topbit = 1 & v1; topbit = 0 & v0
+        [ val = 0 | v0 | ( v1 << 7 ) ; ]
+{ res:8 = val; export res; }
+ULeb128: val is topbit = 1 & v2; topbit = 1 & v1; topbit = 0 & v0
+        [ val = 0 | v0 | ( v1 << 7 ) | ( v2 << 14 ) ; ]
+{ res:8 = val; export res; }
+ULeb128: val is topbit = 1 & v3; topbit = 1 & v2; topbit = 1 & v1; topbit = 0 & v0
+        [ val = 0 | v0 | ( v1 << 7 ) | ( v2 << 14 ) | ( v3 << 21 ) ; ]
+{ res:8 = val; export res; }
+ULeb128: val is topbit = 1 & v4; topbit = 1 & v3; topbit = 1 & v2; topbit = 1 & v1; topbit = 0 & v0
+        [ val = 0 | v0 | ( v1 << 7 ) | ( v2 << 14 ) | ( v3 << 21 ) | ( v4 << 28 ) ; ]
+{ res:8 = val; export res; }
+ULeb128: val is topbit = 1 & v5; topbit = 1 & v4; topbit = 1 & v3; topbit = 1 & v2; topbit = 1 & v1; topbit = 0 & v0
+        [ val = 0 | v0 | ( v1 << 7 ) | ( v2 << 14 ) | ( v3 << 21 ) | ( v4 << 28 ) | ( v5 << 35 ) ; ]
+{ res:8 = val; export res; }
+ULeb128: val is topbit = 1 & v6; topbit = 1 & v5; topbit = 1 & v4; topbit = 1 & v3; topbit = 1 & v2; topbit = 1 & v1; topbit = 0 & v0
+        [ val = 0 | v0 | ( v1 << 7 ) | ( v2 << 14 ) | ( v3 << 21 ) | ( v4 << 28 ) | ( v5 << 35 ) | ( v6 << 42 ) ; ]
+{ res:8 = val; export res; }
+ULeb128: val is topbit = 1 & v7; topbit = 1 & v6; topbit = 1 & v5; topbit = 1 & v4; topbit = 1 & v3; topbit = 1 & v2; topbit = 1 & v1; topbit = 0 & v0
+        [ val = 0 | v0 | ( v1 << 7 ) | ( v2 << 14 ) | ( v3 << 21 ) | ( v4 << 28 ) | ( v5 << 35 ) | ( v6 << 42 ) | ( v7 << 49 ) ; ]
+{ res:8 = val; export res; }
+ULeb128: val is topbit = 1 & v8; topbit = 1 & v7; topbit = 1 & v6; topbit = 1 & v5; topbit = 1 & v4; topbit = 1 & v3; topbit = 1 & v2; topbit = 1 & v1; topbit = 0 & v0
+        [ val = 0 | v0 | ( v1 << 7 ) | ( v2 << 14 ) | ( v3 << 21 ) | ( v4 << 28 ) | ( v5 << 35 ) | ( v6 << 42 ) | ( v7 << 49 ) | ( v8 << 56 ) ; ]
+{ res:8 = val; export res; }
+ULeb128: val is topbit = 1 & v9; topbit = 1 & v8; topbit = 1 & v7; topbit = 1 & v6; topbit = 1 & v5; topbit = 1 & v4; topbit = 1 & v3; topbit = 1 & v2; topbit = 1 & v1; topbit = 0 & v0
+        [ val = 0 | v0 | ( v1 << 7 ) | ( v2 << 14 ) | ( v3 << 21 ) | ( v4 << 28 ) | ( v5 << 35 ) | ( v6 << 42 ) | ( v7 << 49 ) | ( v8 << 56 ) | ( v9 << 63 ) ; ]
+{ res:8 = val; export res; }
