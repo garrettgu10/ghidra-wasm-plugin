@@ -4,6 +4,10 @@ define token opcode (8)
 	opc = (0,7)
 ;
 
+define token byteval (8)
+	bytev = (0,7)
+;
+
 ################################################################
 # Macros
 ################################################################
@@ -43,6 +47,22 @@ globalidx: ULeb128 is ULeb128 {
 	export ULeb128;
 }
 
+typeidx: ULeb128 is ULeb128 {
+	export ULeb128;
+}
+
+tableidx: ULeb128 is ULeb128 {
+	export ULeb128;
+}
+
+elemidx: ULeb128 is ULeb128 {
+	export ULeb128;
+}
+
+reftype: "reftype="^bytev is bytev {
+	export bytev;
+}
+
 memalign: "align="^ULeb128 is ULeb128 {
 	export ULeb128;
 }
@@ -68,9 +88,25 @@ inc_indent: " . "^inc_indent is inc_indent [ indent_lvl = indent_lvl-1; ]{}
 
 :""^indent^"nop" is opc=0x01; indent {}
 
-#TODO: 0x02-0x11
+:""^inc_indent^"block" "blocktype="^ULeb128 is opc=0x02; ULeb128; $(INC_INDENT) unimpl
+:""^inc_indent^"loop" "blocktype="^ULeb128 is opc=0x03; ULeb128; $(INC_INDENT) unimpl
+:""^inc_indent^"if" "blocktype="^ULeb128 is opc=0x04; ULeb128; $(INC_INDENT) unimpl
+:""^inc_indent^"else" is opc=0x05; inc_indent unimpl
 
-#TODO: 0xd0-0xd2
+:""^indent^"end" is opc=0x0b; indent_lvl=0; indent unimpl
+:""^indent^"end" is opc=0x0b; indent [ indent_lvl = indent_lvl - 1; globalset(inst_next, indent_lvl); ] unimpl
+
+:""^indent^"br" ULeb128 is opc=0x0c; ULeb128; indent unimpl
+:""^indent^"br_if" ULeb128 is opc=0x0d; ULeb128; indent unimpl
+#TODO: br_table
+#:""^indent^"br_table" is opc=0x0e; ULeb128; indent [br_table_count=ULeb128;] unimpl
+:""^indent^"return" is opc=0x0f; indent unimpl
+:""^indent^"call" ULeb128 is opc=0x10; ULeb128; indent unimpl
+:""^indent^"call_indirect" typeidx tableidx is opc=0x11; typeidx; tableidx; indent unimpl
+
+:""^indent^"ref.null" reftype is opc=0xd0; reftype; indent unimpl
+:""^indent^"ref.is_null" is opc=0xd1; indent unimpl
+:""^indent^"ref.func" ULeb128 is opc=0xd2; ULeb128; indent unimpl
 
 :""^indent^"drop" is opc=0x1a; indent unimpl
 :""^indent^"select" is opc=0x1b; indent unimpl
@@ -97,16 +133,6 @@ inc_indent: " . "^inc_indent is inc_indent [ indent_lvl = indent_lvl-1; ]{}
 	push64(val);
 }
 
-:""^inc_indent^"if" "blocktype="^ULeb128 is opc=0x04; ULeb128; $(INC_INDENT) unimpl
-:""^inc_indent^"block" "blocktype="^ULeb128 is opc=0x02; ULeb128; $(INC_INDENT) unimpl
-
-:""^indent^"br" ULeb128 is opc=0x0c; ULeb128; indent unimpl
-:""^indent^"br_if" ULeb128 is opc=0x0d; ULeb128; indent unimpl
-
 @include "BasicOps.sinc"
 
 #TODO: 0x3f
-
-:""^indent^"end" is opc=0x0b; indent_lvl=0; indent unimpl
-:""^indent^"end" is opc=0x0b; indent [ indent_lvl = indent_lvl - 1; globalset(inst_next, indent_lvl); ] unimpl
-:""^indent^"return" is opc=0x0f; indent unimpl
