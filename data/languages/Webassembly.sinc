@@ -61,7 +61,6 @@ inc_indent: "" is indent_lvl=1 | indent_lvl=0 {}
 inc_indent: " . "^inc_indent is inc_indent [ indent_lvl = indent_lvl-1; ]{}
 
 @define INC_INDENT "inc_indent [ indent_lvl = indent_lvl + 1; globalset(inst_next, indent_lvl); ]"
-@define DEC_INDENT "indent [ indent_lvl = indent_lvl - 1; globalset(inst_next, indent_lvl); ]"
 
 :""^indent^"unreachable" is opc=0x00; indent {
 	trap();
@@ -108,5 +107,6 @@ inc_indent: " . "^inc_indent is inc_indent [ indent_lvl = indent_lvl-1; ]{}
 
 #TODO: 0x3f
 
-:""^indent^"end" is opc=0x0b; $(DEC_INDENT) unimpl
+:""^indent^"end" is opc=0x0b; indent_lvl=0; indent unimpl
+:""^indent^"end" is opc=0x0b; indent [ indent_lvl = indent_lvl - 1; globalset(inst_next, indent_lvl); ] unimpl
 :""^indent^"return" is opc=0x0f; indent unimpl
