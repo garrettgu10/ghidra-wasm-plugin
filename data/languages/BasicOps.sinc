@@ -21,131 +21,864 @@
 :""^indent^"i64.store8" memalign memoffset is opc=0x3C; memalign; memoffset; indent unimpl
 :""^indent^"i64.store16" memalign memoffset is opc=0x3D; memalign; memoffset; indent unimpl
 :""^indent^"i64.store32" memalign memoffset is opc=0x3E; memalign; memoffset; indent unimpl
-:""^indent^"i32.eqz"  is opc=0x45; indent unimpl
-:""^indent^"i32.eq"  is opc=0x46; indent unimpl
-:""^indent^"i32.ne"  is opc=0x47; indent unimpl
-:""^indent^"i32.lt_s"  is opc=0x48; indent unimpl
-:""^indent^"i32.lt_u"  is opc=0x49; indent unimpl
-:""^indent^"i32.gt_s"  is opc=0x4A; indent unimpl
-:""^indent^"i32.gt_u"  is opc=0x4B; indent unimpl
-:""^indent^"i32.le_s"  is opc=0x4C; indent unimpl
-:""^indent^"i32.le_u"  is opc=0x4D; indent unimpl
-:""^indent^"i32.ge_s"  is opc=0x4E; indent unimpl
-:""^indent^"i32.ge_u"  is opc=0x4F; indent unimpl
-:""^indent^"i64.eqz"  is opc=0x50; indent unimpl
-:""^indent^"i64.eq"  is opc=0x51; indent unimpl
-:""^indent^"i64.ne"  is opc=0x52; indent unimpl
-:""^indent^"i64.lt_s"  is opc=0x53; indent unimpl
-:""^indent^"i64.lt_u"  is opc=0x54; indent unimpl
-:""^indent^"i64.gt_s"  is opc=0x55; indent unimpl
-:""^indent^"i64.gt_u"  is opc=0x56; indent unimpl
-:""^indent^"i64.le_s"  is opc=0x57; indent unimpl
-:""^indent^"i64.le_u"  is opc=0x58; indent unimpl
-:""^indent^"i64.ge_s"  is opc=0x59; indent unimpl
-:""^indent^"i64.ge_u"  is opc=0x5A; indent unimpl
-:""^indent^"f32.eq"  is opc=0x5B; indent unimpl
-:""^indent^"f32.ne"  is opc=0x5C; indent unimpl
-:""^indent^"f32.lt"  is opc=0x5D; indent unimpl
-:""^indent^"f32.gt"  is opc=0x5E; indent unimpl
-:""^indent^"f32.le"  is opc=0x5F; indent unimpl
-:""^indent^"f32.ge"  is opc=0x60; indent unimpl
-:""^indent^"f64.eq"  is opc=0x61; indent unimpl
-:""^indent^"f64.ne"  is opc=0x62; indent unimpl
-:""^indent^"f64.lt"  is opc=0x63; indent unimpl
-:""^indent^"f64.gt"  is opc=0x64; indent unimpl
-:""^indent^"f64.le"  is opc=0x65; indent unimpl
-:""^indent^"f64.ge"  is opc=0x66; indent unimpl
-:""^indent^"i32.clz"  is opc=0x67; indent unimpl
-:""^indent^"i32.ctz"  is opc=0x68; indent unimpl
-:""^indent^"i32.popcnt"  is opc=0x69; indent unimpl
-:""^indent^"i32.add"  is opc=0x6A; indent unimpl
-:""^indent^"i32.sub"  is opc=0x6B; indent unimpl
-:""^indent^"i32.mul"  is opc=0x6C; indent unimpl
-:""^indent^"i32.div_s"  is opc=0x6D; indent unimpl
-:""^indent^"i32.div_u"  is opc=0x6E; indent unimpl
-:""^indent^"i32.rem_s"  is opc=0x6F; indent unimpl
-:""^indent^"i32.rem_u"  is opc=0x70; indent unimpl
-:""^indent^"i32.and"  is opc=0x71; indent unimpl
-:""^indent^"i32.or"  is opc=0x72; indent unimpl
-:""^indent^"i32.xor"  is opc=0x73; indent unimpl
-:""^indent^"i32.shl"  is opc=0x74; indent unimpl
-:""^indent^"i32.shr_s"  is opc=0x75; indent unimpl
-:""^indent^"i32.shr_u"  is opc=0x76; indent unimpl
-:""^indent^"i32.rotl"  is opc=0x77; indent unimpl
-:""^indent^"i32.rotr"  is opc=0x78; indent unimpl
-:""^indent^"i64.clz"  is opc=0x79; indent unimpl
-:""^indent^"i64.ctz"  is opc=0x7A; indent unimpl
-:""^indent^"i64.popcnt"  is opc=0x7B; indent unimpl
-:""^indent^"i64.add"  is opc=0x7C; indent unimpl
-:""^indent^"i64.sub"  is opc=0x7D; indent unimpl
-:""^indent^"i64.mul"  is opc=0x7E; indent unimpl
-:""^indent^"i64.div_s"  is opc=0x7F; indent unimpl
-:""^indent^"i64.div_u"  is opc=0x80; indent unimpl
-:""^indent^"i64.rem_s"  is opc=0x81; indent unimpl
-:""^indent^"i64.rem_u"  is opc=0x82; indent unimpl
-:""^indent^"i64.and"  is opc=0x83; indent unimpl
-:""^indent^"i64.or"  is opc=0x84; indent unimpl
-:""^indent^"i64.xor"  is opc=0x85; indent unimpl
-:""^indent^"i64.shl"  is opc=0x86; indent unimpl
-:""^indent^"i64.shr_s"  is opc=0x87; indent unimpl
-:""^indent^"i64.shr_u"  is opc=0x88; indent unimpl
-:""^indent^"i64.rotl"  is opc=0x89; indent unimpl
-:""^indent^"i64.rotr"  is opc=0x8A; indent unimpl
-:""^indent^"f32.abs"  is opc=0x8B; indent unimpl
-:""^indent^"f32.neg"  is opc=0x8C; indent unimpl
-:""^indent^"f32.ceil"  is opc=0x8D; indent unimpl
-:""^indent^"f32.floor"  is opc=0x8E; indent unimpl
-:""^indent^"f32.trunc"  is opc=0x8F; indent unimpl
-:""^indent^"f32.nearest"  is opc=0x90; indent unimpl
-:""^indent^"f32.sqrt"  is opc=0x91; indent unimpl
-:""^indent^"f32.add"  is opc=0x92; indent unimpl
-:""^indent^"f32.sub"  is opc=0x93; indent unimpl
-:""^indent^"f32.mul"  is opc=0x94; indent unimpl
-:""^indent^"f32.div"  is opc=0x95; indent unimpl
-:""^indent^"f32.min"  is opc=0x96; indent unimpl
-:""^indent^"f32.max"  is opc=0x97; indent unimpl
-:""^indent^"f32.copysign"  is opc=0x98; indent unimpl
-:""^indent^"f64.abs"  is opc=0x99; indent unimpl
-:""^indent^"f64.neg"  is opc=0x9A; indent unimpl
-:""^indent^"f64.ceil"  is opc=0x9B; indent unimpl
-:""^indent^"f64.floor"  is opc=0x9C; indent unimpl
-:""^indent^"f64.trunc"  is opc=0x9D; indent unimpl
-:""^indent^"f64.nearest"  is opc=0x9E; indent unimpl
-:""^indent^"f64.sqrt"  is opc=0x9F; indent unimpl
-:""^indent^"f64.add"  is opc=0xA0; indent unimpl
-:""^indent^"f64.sub"  is opc=0xA1; indent unimpl
-:""^indent^"f64.mul"  is opc=0xA2; indent unimpl
-:""^indent^"f64.div"  is opc=0xA3; indent unimpl
-:""^indent^"f64.min"  is opc=0xA4; indent unimpl
-:""^indent^"f64.max"  is opc=0xA5; indent unimpl
-:""^indent^"f64.copysign"  is opc=0xA6; indent unimpl
-:""^indent^"i32.wrap_i64"  is opc=0xA7; indent unimpl
-:""^indent^"i32.trunc_f32_s"  is opc=0xA8; indent unimpl
-:""^indent^"i32.trunc_f32_u"  is opc=0xA9; indent unimpl
-:""^indent^"i32.trunc_f64_s"  is opc=0xAA; indent unimpl
-:""^indent^"i32.trunc_f64_u"  is opc=0xAB; indent unimpl
-:""^indent^"i64.extend_i32_s"  is opc=0xAC; indent unimpl
-:""^indent^"i64.extend_i32_u"  is opc=0xAD; indent unimpl
-:""^indent^"i64.trunc_f32_s"  is opc=0xAE; indent unimpl
-:""^indent^"i64.trunc_f32_u"  is opc=0xAF; indent unimpl
-:""^indent^"i64.trunc_f64_s"  is opc=0xB0; indent unimpl
-:""^indent^"i64.trunc_f64_u"  is opc=0xB1; indent unimpl
-:""^indent^"f32.convert_i32_s"  is opc=0xB2; indent unimpl
-:""^indent^"f32.convert_i32_u"  is opc=0xB3; indent unimpl
-:""^indent^"f32.convert_i64_s"  is opc=0xB4; indent unimpl
-:""^indent^"f32.convert_i64_u"  is opc=0xB5; indent unimpl
-:""^indent^"f32.demote_f64"  is opc=0xB6; indent unimpl
-:""^indent^"f64.convert_i32_s"  is opc=0xB7; indent unimpl
-:""^indent^"f64.convert_i32_u"  is opc=0xB8; indent unimpl
-:""^indent^"f64.convert_i64_s"  is opc=0xB9; indent unimpl
-:""^indent^"f64.convert_i64_u"  is opc=0xBA; indent unimpl
-:""^indent^"f64.promote_f32"  is opc=0xBB; indent unimpl
-:""^indent^"i32.reinterpret_f32"  is opc=0xBC; indent unimpl
-:""^indent^"i64.reinterpret_f64"  is opc=0xBD; indent unimpl
-:""^indent^"f32.reinterpret_i32"  is opc=0xBE; indent unimpl
-:""^indent^"f64.reinterpret_i64"  is opc=0xBF; indent unimpl
-:""^indent^"i32.extend8_s"  is opc=0xC0; indent unimpl
-:""^indent^"i32.extend16_s"  is opc=0xC1; indent unimpl
-:""^indent^"i64.extend8_s"  is opc=0xC2; indent unimpl
-:""^indent^"i64.extend16_s"  is opc=0xC3; indent unimpl
-:""^indent^"i64.extend32_s"  is opc=0xC4; indent unimpl
+:""^indent^"i32.eqz"  is opc=0x45; indent {
+    x0:4 = 0;
+    pop32(x0);
+	push32(x0 == 0);
+}
+:""^indent^"i32.eq"  is opc=0x46; indent {
+	x0:4 = 0;
+	x1:4 = 0;
+	pop32(x1);
+	pop32(x0);
+	push32(x0 == x1);
+}
+:""^indent^"i32.ne"  is opc=0x47; indent {
+	x0:4 = 0;
+	x1:4 = 0;
+	pop32(x1);
+	pop32(x0);
+	push32(x0 != x1);
+}
+:""^indent^"i32.lt_s"  is opc=0x48; indent {
+	x0:4 = 0;
+	x1:4 = 0;
+	pop32(x0);
+	pop32(x1);
+	push32(x0 s< x1);
+}
+:""^indent^"i32.lt_u"  is opc=0x49; indent {
+	x0:4 = 0;
+	x1:4 = 0;
+	pop32(x0);
+	pop32(x1);
+	push32(x0 < x1);
+}
+:""^indent^"i32.gt_s"  is opc=0x4A; indent {
+	x0:4 = 0;
+	x1:4 = 0;
+	pop32(x0);
+	pop32(x1);
+	push32(x0 s> x1);
+}
+:""^indent^"i32.gt_u"  is opc=0x4B; indent {
+	x0:4 = 0;
+	x1:4 = 0;
+	pop32(x0);
+	pop32(x1);
+	push32(x0 > x1);
+}
+:""^indent^"i32.le_s"  is opc=0x4C; indent {
+	x0:4 = 0;
+	x1:4 = 0;
+	pop32(x0);
+	pop32(x1);
+	push32(x0 s<= x1);
+}
+:""^indent^"i32.le_u"  is opc=0x4D; indent {
+	x0:4 = 0;
+	x1:4 = 0;
+	pop32(x0);
+	pop32(x1);
+	push32(x0 <= x1);
+}
+:""^indent^"i32.ge_s"  is opc=0x4E; indent {
+	x0:4 = 0;
+	x1:4 = 0;
+	pop32(x0);
+	pop32(x1);
+	push32(x0 s>= x1);
+}
+:""^indent^"i32.ge_u"  is opc=0x4F; indent {
+	x0:4 = 0;
+	x1:4 = 0;
+	pop32(x0);
+	pop32(x1);
+	push32(x0 >= x1);
+}
+:""^indent^"i64.eqz"  is opc=0x50; indent {
+    x0:8 = 0;
+    pop64(x0);
+	push32(x0 == 0);
+}
+:""^indent^"i64.eq"  is opc=0x51; indent {
+	x0:8 = 0;
+	x1:8 = 0;
+	pop64(x1);
+	pop64(x0);
+	push32(x0 == x1);
+}
+:""^indent^"i64.ne"  is opc=0x52; indent {
+	x0:8 = 0;
+	x1:8 = 0;
+	pop64(x1);
+	pop64(x0);
+	push32(x0 != x1);
+}
+:""^indent^"i64.lt_s"  is opc=0x53; indent {
+	x0:8 = 0;
+	x1:8 = 0;
+	pop64(x1);
+	pop64(x0);
+	push32(x0 s< x1);
+}
+:""^indent^"i64.lt_u"  is opc=0x54; indent {
+	x0:8 = 0;
+	x1:8 = 0;
+	pop64(x1);
+	pop64(x0);
+	push32(x0 < x1);
+}
+:""^indent^"i64.gt_s"  is opc=0x55; indent {
+	x0:8 = 0;
+	x1:8 = 0;
+	pop64(x1);
+	pop64(x0);
+	push32(x0 s> x1);
+}
+:""^indent^"i64.gt_u"  is opc=0x56; indent {
+	x0:8 = 0;
+	x1:8 = 0;
+	pop64(x1);
+	pop64(x0);
+	push32(x0 > x1);
+}
+:""^indent^"i64.le_s"  is opc=0x57; indent {
+	x0:8 = 0;
+	x1:8 = 0;
+	pop64(x1);
+	pop64(x0);
+	push32(x0 s<= x1);
+}
+:""^indent^"i64.le_u"  is opc=0x58; indent {
+	x0:8 = 0;
+	x1:8 = 0;
+	pop64(x1);
+	pop64(x0);
+	push32(x0 <= x1);
+}
+:""^indent^"i64.ge_s"  is opc=0x59; indent {
+	x0:8 = 0;
+	x1:8 = 0;
+	pop64(x1);
+	pop64(x0);
+	push32(x0 s>= x1);
+}
+:""^indent^"i64.ge_u"  is opc=0x5A; indent {
+	x0:8 = 0;
+	x1:8 = 0;
+	pop64(x1);
+	pop64(x0);
+	push32(x0 >= x1);
+}
+:""^indent^"f32.eq"  is opc=0x5B; indent {
+	x0:4 = 0;
+	x1:4 = 0;
+	pop32(x1);
+	pop32(x0);
+	push32(x0 f== x1);
+}
+:""^indent^"f32.ne"  is opc=0x5C; indent {
+	x0:4 = 0;
+	x1:4 = 0;
+	pop32(x1);
+	pop32(x0);
+	push32(x0 f!= x1);
+}
+:""^indent^"f32.lt"  is opc=0x5D; indent {
+	x0:4 = 0;
+	x1:4 = 0;
+	pop32(x1);
+	pop32(x0);
+	push32(x0 f< x1);
+}
+:""^indent^"f32.gt"  is opc=0x5E; indent {
+	x0:4 = 0;
+	x1:4 = 0;
+	pop32(x1);
+	pop32(x0);
+	push32(x0 f> x1);
+}
+:""^indent^"f32.le"  is opc=0x5F; indent {
+	x0:4 = 0;
+	x1:4 = 0;
+	pop32(x1);
+	pop32(x0);
+	push32(x0 f<= x1);
+}
+:""^indent^"f32.ge"  is opc=0x60; indent {
+	x0:4 = 0;
+	x1:4 = 0;
+	pop32(x1);
+	pop32(x0);
+	push32(x0 f>= x1);
+}
+:""^indent^"f64.eq"  is opc=0x61; indent {
+	x0:8 = 0;
+	x1:8 = 0;
+	pop64(x1);
+	pop64(x0);
+	push32(x0 f== x1);
+}
+:""^indent^"f64.ne"  is opc=0x62; indent {
+	x0:8 = 0;
+	x1:8 = 0;
+	pop64(x1);
+	pop64(x0);
+	push32(x0 f!= x1);
+}
+:""^indent^"f64.lt"  is opc=0x63; indent {
+	x0:8 = 0;
+	x1:8 = 0;
+	pop64(x1);
+	pop64(x0);
+	push32(x0 f< x1);
+}
+:""^indent^"f64.gt"  is opc=0x64; indent {
+	x0:8 = 0;
+	x1:8 = 0;
+	pop64(x1);
+	pop64(x0);
+	push32(x0 f> x1);
+}
+:""^indent^"f64.le"  is opc=0x65; indent {
+	x0:8 = 0;
+	x1:8 = 0;
+	pop64(x1);
+	pop64(x0);
+	push32(x0 f<= x1);
+}
+:""^indent^"f64.ge"  is opc=0x66; indent {
+	x0:8 = 0;
+	x1:8 = 0;
+	pop64(x1);
+	pop64(x0);
+	push32(x0 f>= x1);
+}
+:""^indent^"i32.clz"  is opc=0x67; indent {
+	x0:4 = 0;
+	pop32(x0);
+	res:4 = clz(x0);
+	push32(res);
+}
+:""^indent^"i32.ctz"  is opc=0x68; indent {
+	x0:4 = 0;
+	pop32(x0);
+	res:4 = ctz(x0);
+	push32(res);
+}
+:""^indent^"i32.popcnt"  is opc=0x69; indent {
+	x0:4 = 0;
+	pop32(x0);
+	res:4 = popcnt(x0);
+	push32(res);
+}
+:""^indent^"i32.add"  is opc=0x6A; indent {
+	x0:4 = 0;
+	x1:4 = 0;
+	pop32(x1);
+	pop32(x0);
+	push32(x0 + x1);
+}
+:""^indent^"i32.sub"  is opc=0x6B; indent {
+	x0:4 = 0;
+	x1:4 = 0;
+	pop32(x1);
+	pop32(x0);
+	push32(x0 - x1);
+}
+:""^indent^"i32.mul"  is opc=0x6C; indent {
+	x0:4 = 0;
+	x1:4 = 0;
+	pop32(x1);
+	pop32(x0);
+	push32(x0 * x1);
+}
+:""^indent^"i32.div_s"  is opc=0x6D; indent {
+	x0:4 = 0;
+	x1:4 = 0;
+	pop32(x1);
+	pop32(x0);
+	push32(x0 s/ x1);
+}
+:""^indent^"i32.div_u"  is opc=0x6E; indent {
+	x0:4 = 0;
+	x1:4 = 0;
+	pop32(x1);
+	pop32(x0);
+	push32(x0 / x1);
+}
+:""^indent^"i32.rem_s"  is opc=0x6F; indent {
+	x0:4 = 0;
+	x1:4 = 0;
+	pop32(x1);
+	pop32(x0);
+	push32(x0 s% x1);
+}
+:""^indent^"i32.rem_u"  is opc=0x70; indent {
+	x0:4 = 0;
+	x1:4 = 0;
+	pop32(x1);
+	pop32(x0);
+	push32(x0 % x1);
+}
+:""^indent^"i32.and"  is opc=0x71; indent {
+	x0:4 = 0;
+	x1:4 = 0;
+	pop32(x1);
+	pop32(x0);
+	push32(x0 & x1);
+}
+:""^indent^"i32.or"  is opc=0x72; indent {
+	x0:4 = 0;
+	x1:4 = 0;
+	pop32(x1);
+	pop32(x0);
+	push32(x0 | x1);
+}
+:""^indent^"i32.xor"  is opc=0x73; indent {
+	x0:4 = 0;
+	x1:4 = 0;
+	pop32(x1);
+	pop32(x0);
+	push32(x0 ^ x1);
+}
+:""^indent^"i32.shl"  is opc=0x74; indent {
+	x0:4 = 0;
+	x1:4 = 0;
+	pop32(x1);
+	pop32(x0);
+	push32(x0 << x1);
+}
+:""^indent^"i32.shr_s"  is opc=0x75; indent {
+	x0:4 = 0;
+	x1:4 = 0;
+	pop32(x1);
+	pop32(x0);
+	push32(x0 s>> x1);
+}
+:""^indent^"i32.shr_u"  is opc=0x76; indent {
+	x0:4 = 0;
+	x1:4 = 0;
+	pop32(x1);
+	pop32(x0);
+	push32(x0 >> x1);
+}
+:""^indent^"i32.rotl"  is opc=0x77; indent {
+	x0:4 = 0;
+	x1:4 = 0;
+	pop32(x1);
+	pop32(x0);
+	push32((x0 << x1) | (x0 >> (32 - x1)));
+}
+:""^indent^"i32.rotr"  is opc=0x78; indent {
+	x0:4 = 0;
+	x1:4 = 0;
+	pop32(x1);
+	pop32(x0);
+	push32((x0 >> x1) | (x0 << (32 - x1)));
+}
+:""^indent^"i64.clz"  is opc=0x79; indent {
+	x0:8 = 0;
+	pop64(x0);
+	res:8 = clz(x0);
+	push64(res);
+}
+:""^indent^"i64.ctz"  is opc=0x7A; indent {
+	x0:8 = 0;
+	pop64(x0);
+	res:8 = ctz(x0);
+	push64(res);
+}
+:""^indent^"i64.popcnt"  is opc=0x7B; indent {
+	x0:8 = 0;
+	pop64(x0);
+	res:8 = popcnt(x0);
+	push64(res);
+}
+:""^indent^"i64.add"  is opc=0x7C; indent {
+	x0:8 = 0;
+	x1:8 = 0;
+	pop64(x1);
+	pop64(x0);
+	push64(x0 + x1);
+}
+:""^indent^"i64.sub"  is opc=0x7D; indent {
+	x0:8 = 0;
+	x1:8 = 0;
+	pop64(x1);
+	pop64(x0);
+	push64(x0 - x1);
+}
+:""^indent^"i64.mul"  is opc=0x7E; indent {
+	x0:8 = 0;
+	x1:8 = 0;
+	pop64(x1);
+	pop64(x0);
+	push64(x0 * x1);
+}
+:""^indent^"i64.div_s"  is opc=0x7F; indent {
+	x0:8 = 0;
+	x1:8 = 0;
+	pop64(x1);
+	pop64(x0);
+	push64(x0 s/ x1);
+}
+:""^indent^"i64.div_u"  is opc=0x80; indent {
+	x0:8 = 0;
+	x1:8 = 0;
+	pop64(x1);
+	pop64(x0);
+	push64(x0 / x1);
+}
+:""^indent^"i64.rem_s"  is opc=0x81; indent {
+	x0:8 = 0;
+	x1:8 = 0;
+	pop64(x1);
+	pop64(x0);
+	push64(x0 s% x1);
+}
+:""^indent^"i64.rem_u"  is opc=0x82; indent {
+	x0:8 = 0;
+	x1:8 = 0;
+	pop64(x1);
+	pop64(x0);
+	push64(x0 % x1);
+}
+:""^indent^"i64.and"  is opc=0x83; indent {
+	x0:8 = 0;
+	x1:8 = 0;
+	pop64(x1);
+	pop64(x0);
+	push64(x0 & x1);
+}
+:""^indent^"i64.or"  is opc=0x84; indent {
+	x0:8 = 0;
+	x1:8 = 0;
+	pop64(x1);
+	pop64(x0);
+	push64(x0 | x1);
+}
+:""^indent^"i64.xor"  is opc=0x85; indent {
+	x0:8 = 0;
+	x1:8 = 0;
+	pop64(x1);
+	pop64(x0);
+	push64(x0 ^ x1);
+}
+:""^indent^"i64.shl"  is opc=0x86; indent {
+	x0:8 = 0;
+	x1:8 = 0;
+	pop64(x1);
+	pop64(x0);
+	push64(x0 << x1);
+}
+:""^indent^"i64.shr_s"  is opc=0x87; indent {
+	x0:8 = 0;
+	x1:8 = 0;
+	pop64(x1);
+	pop64(x0);
+	push64(x0 s>> x1);
+}
+:""^indent^"i64.shr_u"  is opc=0x88; indent {
+	x0:8 = 0;
+	x1:8 = 0;
+	pop64(x1);
+	pop64(x0);
+	push64(x0 >> x1);
+}
+:""^indent^"i64.rotl"  is opc=0x89; indent {
+	x0:8 = 0;
+	x1:8 = 0;
+	pop64(x1);
+	pop64(x0);
+	push64((x0 << x1) | (x0 >> (64 - x1)));
+}
+:""^indent^"i64.rotr"  is opc=0x8A; indent {
+	x0:8 = 0;
+	x1:8 = 0;
+	pop64(x1);
+	pop64(x0);
+	push64((x0 >> x1) | (x0 << (64 - x1)));
+}
+:""^indent^"f32.abs"  is opc=0x8B; indent {
+	x0:4 = 0;
+	pop32(x0);
+	push32(abs(x0));
+}
+:""^indent^"f32.neg"  is opc=0x8C; indent {
+	x0:4 = 0;
+	pop32(x0);
+	push32(f-x0);
+}
+:""^indent^"f32.ceil"  is opc=0x8D; indent {
+	x0:4 = 0;
+	pop32(x0);
+	push32(ceil(x0));
+}
+:""^indent^"f32.floor"  is opc=0x8E; indent {
+	x0:4 = 0;
+	pop32(x0);
+	push32(floor(x0));
+}
+:""^indent^"f32.trunc"  is opc=0x8F; indent {
+	x0:4 = 0;
+	pop32(x0);
+	x0 = trunc(x0);
+	x0 = int2float(x0);
+	push32(x0);
+}
+:""^indent^"f32.nearest"  is opc=0x90; indent {
+	x0:4 = 0;
+	pop32(x0);
+	push32(round(x0));
+}
+:""^indent^"f32.sqrt"  is opc=0x91; indent {
+	x0:4 = 0;
+	pop32(x0);
+	push32(sqrt(x0));
+}
+:""^indent^"f32.add"  is opc=0x92; indent {
+	x0:4 = 0;
+	x1:4 = 0;
+	pop32(x1);
+	pop32(x0);
+	push32(x0 f+ x1);
+}
+:""^indent^"f32.sub"  is opc=0x93; indent {
+	x0:4 = 0;
+	x1:4 = 0;
+	pop32(x1);
+	pop32(x0);
+	push32(x0 f- x1);
+}
+:""^indent^"f32.mul"  is opc=0x94; indent {
+	x0:4 = 0;
+	x1:4 = 0;
+	pop32(x1);
+	pop32(x0);
+	push32(x0 f* x1);
+}
+:""^indent^"f32.div"  is opc=0x95; indent {
+	x0:4 = 0;
+	x1:4 = 0;
+	pop32(x1);
+	pop32(x0);
+	push32(x0 f/ x1);
+}
+:""^indent^"f32.min"  is opc=0x96; indent {
+	x0:4 = 0;
+	x1:4 = 0;
+	res:4 = 0;
+	pop32(x1);
+	pop32(x0);
+	if(x0 f> x1) goto <x0bigger>;
+	res = x0;
+	goto <end>;
+<x0bigger>
+	res = x1;
+<end>
+	push32(res);
+}
+:""^indent^"f32.max"  is opc=0x97; indent {
+	x0:4 = 0;
+	x1:4 = 0;
+	res:4 = 0;
+	pop32(x1);
+	pop32(x0);
+	if(x0 f> x1) goto <x0bigger>;
+	res = x1;
+	goto <end>;
+<x0bigger>
+	res = x0;
+<end>
+	push32(res);
+}
+:""^indent^"f32.copysign"  is opc=0x98; indent {
+	x0:4 = 0;
+	x1:4 = 0;
+	res:4 = 0;
+	pop32(x1);
+	pop32(x0);
+	if((x0 f< int2float(0:4)) != (x1 f< int2float(0:4))) goto <diffsign>;
+	res = x0;
+	goto <end>;
+<diffsign>
+	res = f-x0;
+<end>
+	push32(res);
+}
+:""^indent^"f64.abs"  is opc=0x99; indent {
+	x0:8 = 0;
+	pop64(x0);
+	push64(abs(x0));
+}
+:""^indent^"f64.neg"  is opc=0x9A; indent {
+	x0:8 = 0;
+	pop64(x0);
+	push64(f-x0);
+}
+:""^indent^"f64.ceil"  is opc=0x9B; indent {
+	x0:8 = 0;
+	pop64(x0);
+	push64(ceil(x0));
+}
+:""^indent^"f64.floor"  is opc=0x9C; indent {
+	x0:8 = 0;
+	pop64(x0);
+	push64(floor(x0));
+}
+:""^indent^"f64.trunc"  is opc=0x9D; indent {
+	x0:8 = 0;
+	pop64(x0);
+	x0 = trunc(x0);
+	x0 = int2float(x0);
+	push64(x0);
+}
+:""^indent^"f64.nearest"  is opc=0x9E; indent {
+	x0:8 = 0;
+	pop64(x0);
+	push64(round(x0));
+}
+:""^indent^"f64.sqrt"  is opc=0x9F; indent {
+	x0:8 = 0;
+	pop64(x0);
+	push64(sqrt(x0));
+}
+:""^indent^"f64.add"  is opc=0xA0; indent {
+	x0:8 = 0;
+	x1:8 = 0;
+	pop64(x1);
+	pop64(x0);
+	push64(x0 f+ x1);
+}
+:""^indent^"f64.sub"  is opc=0xA1; indent {
+	x0:8 = 0;
+	x1:8 = 0;
+	pop64(x1);
+	pop64(x0);
+	push64(x0 f- x1);
+}
+:""^indent^"f64.mul"  is opc=0xA2; indent {
+	x0:8 = 0;
+	x1:8 = 0;
+	pop64(x1);
+	pop64(x0);
+	push64(x0 f* x1);
+}
+:""^indent^"f64.div"  is opc=0xA3; indent {
+	x0:8 = 0;
+	x1:8 = 0;
+	pop64(x1);
+	pop64(x0);
+	push64(x0 f/ x1);
+}
+:""^indent^"f64.min"  is opc=0xA4; indent {
+	x0:8 = 0;
+	x1:8 = 0;
+	res:8 = 0;
+	pop64(x1);
+	pop64(x0);
+	if(x0 f> x1) goto <x0bigger>;
+	res = x0;
+	goto <end>;
+<x0bigger>
+	res = x1;
+<end>
+	push64(res);
+}
+:""^indent^"f64.max"  is opc=0xA5; indent {
+	x0:8 = 0;
+	x1:8 = 0;
+	res:8 = 0;
+	pop64(x1);
+	pop64(x0);
+	if(x0 f> x1) goto <x0bigger>;
+	res = x1;
+	goto <end>;
+<x0bigger>
+	res = x0;
+<end>
+	push64(res);
+}
+:""^indent^"f64.copysign"  is opc=0xA6; indent {
+	x0:8 = 0;
+	x1:8 = 0;
+	res:8 = 0;
+	pop64(x1);
+	pop64(x0);
+	if((x0 f< int2float(0:4)) != (x1 f< int2float(0:4))) goto <diffsign>;
+	res = x0;
+	goto <end>;
+<diffsign>
+	res = f-x0;
+<end>
+	push64(res);
+}
+:""^indent^"i32.wrap_i64"  is opc=0xA7; indent {
+	x0:8 = 0;
+	pop64(x0);
+	res:4 = x0[0,32];
+	push32(res);
+}
+:""^indent^"i32.trunc_f32_s"  is opc=0xA8; indent {
+	x0:4 = 0;
+	pop32(x0);
+	res:4 = trunc(x0);
+	push32(res);
+}
+:""^indent^"i32.trunc_f32_u"  is opc=0xA9; indent {
+	x0:4 = 0;
+	pop32(x0);
+	res:4 = trunc(x0); #TODO: Can we do an unsigned trunc?
+	push32(res);
+}
+:""^indent^"i32.trunc_f64_s"  is opc=0xAA; indent {
+	x0:8 = 0;
+	pop64(x0);
+	res:4 = trunc(x0);
+	push32(res);
+}
+:""^indent^"i32.trunc_f64_u"  is opc=0xAB; indent {
+	x0:8 = 0;
+	pop64(x0);
+	res:4 = trunc(x0);
+	push32(res);
+}
+:""^indent^"i64.extend_i32_s"  is opc=0xAC; indent {
+	x0:4 = 0;
+	pop32(x0);
+	res:8 = sext(x0);
+	push64(res);
+}
+:""^indent^"i64.extend_i32_u"  is opc=0xAD; indent {
+	x0:4 = 0;
+	pop32(x0);
+	res:8 = zext(x0);
+	push64(res);
+}
+:""^indent^"i64.trunc_f32_s"  is opc=0xAE; indent {
+	x0:4 = 0;
+	pop32(x0);
+	res:8 = trunc(x0);
+	push64(res);
+}
+:""^indent^"i64.trunc_f32_u"  is opc=0xAF; indent {
+	x0:4 = 0;
+	pop32(x0);
+	res:8 = trunc(x0);
+	push64(res);
+}
+:""^indent^"i64.trunc_f64_s"  is opc=0xB0; indent {
+	x0:8 = 0;
+	pop64(x0);
+	res:8 = trunc(x0);
+	push64(res);
+}
+:""^indent^"i64.trunc_f64_u"  is opc=0xB1; indent {
+	x0:8 = 0;
+	pop64(x0);
+	res:8 = trunc(x0);
+	push64(res);
+}
+:""^indent^"f32.convert_i32_s"  is opc=0xB2; indent {
+	x0:4 = 0;
+	pop32(x0);
+	res:4 = int2float(x0);
+	push32(res);
+}
+:""^indent^"f32.convert_i32_u"  is opc=0xB3; indent {
+	x0:4 = 0;
+	pop32(x0);
+	res:4 = int2float(x0);
+	push32(res);
+}
+:""^indent^"f32.convert_i64_s"  is opc=0xB4; indent {
+	x0:8 = 0;
+	pop64(x0);
+	res:4 = int2float(x0);
+	push32(res);
+}
+:""^indent^"f32.convert_i64_u"  is opc=0xB5; indent {
+	x0:8 = 0;
+	pop64(x0);
+	res:4 = int2float(x0);
+	push32(res);
+}
+:""^indent^"f32.demote_f64"  is opc=0xB6; indent {
+	x0:8 = 0;
+	pop64(x0);
+	res:4 = float2float(x0);
+	push32(res);
+}
+:""^indent^"f64.convert_i32_s"  is opc=0xB7; indent {
+	x0:4 = 0;
+	pop32(x0);
+	res:8 = int2float(x0);
+	push64(res);
+}
+:""^indent^"f64.convert_i32_u"  is opc=0xB8; indent {
+	x0:4 = 0;
+	pop32(x0);
+	res:8 = int2float(x0);
+	push64(res);
+}
+:""^indent^"f64.convert_i64_s"  is opc=0xB9; indent {
+	x0:8 = 0;
+	pop64(x0);
+	res:8 = int2float(x0);
+	push64(res);
+}
+:""^indent^"f64.convert_i64_u"  is opc=0xBA; indent {
+	x0:8 = 0;
+	pop64(x0);
+	res:8 = int2float(x0);
+	push64(res);
+}
+:""^indent^"f64.promote_f32"  is opc=0xBB; indent {
+	x0:4 = 0;
+	pop32(x0);
+	res:8 = float2float(x0);
+	push64(res);
+}
+:""^indent^"i32.reinterpret_f32"  is opc=0xBC; indent {
+	# No need to define anything since stack is untyped
+}
+:""^indent^"i64.reinterpret_f64"  is opc=0xBD; indent {}
+:""^indent^"f32.reinterpret_i32"  is opc=0xBE; indent {}
+:""^indent^"f64.reinterpret_i64"  is opc=0xBF; indent {}
+:""^indent^"i32.extend8_s"  is opc=0xC0; indent {
+	x0:4 = 0;
+	pop32(x0);
+	singlebyte:1 = x0[0, 7];
+	res:4 = sext(singlebyte);
+	push32(res);
+}
+:""^indent^"i32.extend16_s"  is opc=0xC1; indent {
+	x0:4 = 0;
+	pop32(x0);
+	singleword:2 = x0[0, 15];
+	res:4 = sext(singleword);
+	push32(res);
+}
+:""^indent^"i64.extend8_s"  is opc=0xC2; indent {
+	x0:8 = 0;
+	pop64(x0);
+	singlebyte:1 = x0[0, 7];
+	res:8 = sext(singlebyte);
+	push64(res);
+}
+:""^indent^"i64.extend16_s"  is opc=0xC3; indent {
+	x0:8 = 0;
+	pop64(x0);
+	singleword:2 = x0[0, 15];
+	res:8 = sext(singleword);
+	push64(res);
+}
+:""^indent^"i64.extend32_s"  is opc=0xC4; indent {
+	x0:8 = 0;
+	pop64(x0);
+	dword:4 = x0[0, 31];
+	res:8 = sext(dword);
+	push64(res);
+}

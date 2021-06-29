@@ -36,6 +36,9 @@ macro pop64(ret64) {
 
 define pcodeop trap;
 define pcodeop get_global;
+define pcodeop popcnt;
+define pcodeop clz;
+define pcodeop ctz;
 
 @include "Leb128.sinc"
 
