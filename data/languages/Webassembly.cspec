@@ -3,119 +3,45 @@
 <!-- See Relax specification: Ghidra/Framework/SoftwareModeling/data/languages/compiler_spec.rxg -->
 
 <compiler_spec>
-  <data_organization>
-	<pointer_size value="2" />
+   <data_organization>
+    <char_type signed="false" />
+    <char_size value="2" />
+    <short_size value="2" />
+    <pointer_size value="4"/>
+    <integer_size value = "4"/>
+    <float_size value="4" />
+    <long_size value="8" />
+    <double_size value="8" />
   </data_organization>
   <global>
     <range space="ram"/>
-    <range space="io"/>
+    <range space="mem0"/>
   </global>
   <stackpointer register="SP" space="ram"/>
   <default_proto>
-    <prototype name="__asmA" extrapop="2" stackshift="2" strategy="register">
+    <prototype name="__asmA" extrapop="0" stackshift="0" strategy="register">
       <input>
-        <pentry minsize="1" maxsize="1">
-          <register name="A"/>
-        </pentry>
-        <pentry minsize="1" maxsize="2">
-          <register name="BC"/>
-        </pentry>
-        <pentry minsize="1" maxsize="2">
-          <register name="HL"/>
-        </pentry>
-        <pentry minsize="1" maxsize="2">
-          <register name="DE"/>
-        </pentry>
-        <pentry minsize="1" maxsize="2">
-          <register name="IY"/>
-        </pentry>
-        <pentry minsize="1" maxsize="2">
-          <register name="IX"/>
-        </pentry>
-        <pentry minsize="1" maxsize="500" align="2">
-          <addr offset="2" space="stack"/>
+        <pentry minsize="1" maxsize="8" extension="zero">
+          <register name="l0"/>
         </pentry>
       </input>
       <output>
-        <pentry minsize="1" maxsize="1">
-          <register name="A"/>
+        <pentry minsize="1" maxsize="8" extension="zero">
+          <register name="ret0"/>
         </pentry>
       </output>
-      <unaffected>
-        <register name="SP"/>
-        <register name="BC_"/>
-        <register name="HL_"/>
-        <register name="DE_"/>
-        <register name="AF_"/>
-        <register name="rBBR"/>
-      </unaffected>
     </prototype>
   </default_proto>
-  <prototype name="__asmAF" extrapop="2" stackshift="2" strategy="register">
-      <input>
-        <pentry minsize="1" maxsize="1">
-          <register name="A"/>
-        </pentry>
-        <pentry minsize="1" maxsize="2">
-          <register name="BC"/>
-        </pentry>
-        <pentry minsize="1" maxsize="2">
-          <register name="HL"/>
-        </pentry>
-        <pentry minsize="1" maxsize="2">
-          <register name="DE"/>
-        </pentry>
-        <pentry minsize="1" maxsize="2">
-          <register name="IY"/>
-        </pentry>
-        <pentry minsize="1" maxsize="2">
-          <register name="IX"/>
-        </pentry>
-        <pentry minsize="1" maxsize="500" align="2">
-          <addr offset="2" space="stack"/>
-        </pentry>
-      </input>
-      <output>
-        <pentry minsize="1" maxsize="2">
-          <register name="AF"/>
-        </pentry>
-      </output>
-      <unaffected>
-        <register name="SP"/>
-        <register name="rBBR"/>
-        <register name="BC_"/>
-        <register name="HL_"/>
-        <register name="DE_"/>
-        <register name="AF_"/>
-      </unaffected>
-  </prototype>
-  <prototype name="__stdcall" extrapop="2" stackshift="2">
-      <input>
-        <pentry minsize="1" maxsize="1">
-          <register name="A"/>
-        </pentry>
-        <pentry minsize="1" maxsize="2">
-          <register name="BC"/>
-        </pentry>
-        <pentry minsize="1" maxsize="2">
-          <register name="HL"/>
-        </pentry>
-        <pentry minsize="1" maxsize="500" align="2">
-          <addr offset="2" space="stack"/>
-        </pentry>
-      </input>
-      <output>
-        <pentry minsize="1" maxsize="1">
-          <register name="AF"/>
-        </pentry>
-      </output>
-      <unaffected>
-        <register name="SP"/>
-        <register name="rBBR"/>
-        <register name="BC_"/>
-        <register name="HL_"/>
-        <register name="DE_"/>
-        <register name="AF_"/>
-      </unaffected>
-    </prototype>
+  <callotherfixup targetop="pop32CallOther">
+  	<pcode dynamic="true" />
+  </callotherfixup>
+  <callotherfixup targetop="push32CallOther">
+  	<pcode dynamic="true" />
+  </callotherfixup>
+  <callotherfixup targetop="pop64CallOther">
+  	<pcode dynamic="true" />
+  </callotherfixup>
+  <callotherfixup targetop="push64CallOther">
+  	<pcode dynamic="true" />
+  </callotherfixup>
 </compiler_spec>

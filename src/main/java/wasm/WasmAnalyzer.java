@@ -51,7 +51,7 @@ public class WasmAnalyzer extends AbstractAnalyzer {
 
 		// TODO: Name the analyzer and give it a description.
 
-		super("Wasm exports extractor", "Extracts exported methods from wasm file", AnalyzerType.BYTE_ANALYZER);
+		super("Wasm Pre-Decompiler", "Extracts exported methods from wasm file", AnalyzerType.BYTE_ANALYZER);
 	}
 
 	@Override
