@@ -13,32 +13,30 @@ define token byteval (8)
 ################################################################
 
 # These pcodeop's have NOP semantics, they just signal to the pre-decompiler that a push or pop was performed
-define pcodeop push32CallOther;
-define pcodeop pop32CallOther;
-define pcodeop push64CallOther;
-define pcodeop pop64CallOther;
+define pcodeop pushCallOther;
+define pcodeop popCallOther;
 
 macro push32(val32) {
-	push32CallOther();
+	pushCallOther(32:4);
 	val64:8 = zext(val32);
 	SP = SP - 8;
 	*:8 SP = val64; 
 }
 
 macro pop32(ret32) {
-	pop32CallOther();
+	popCallOther(32:4);
 	ret32 = *:4 SP;
 	SP = SP + 8; 
 }
 
 macro push64(val64) {
-	push64CallOther();
+	pushCallOther(64:4);
 	SP = SP - 8;
 	*:8 SP = val64; 
 }
 
 macro pop64(ret64) {
-	pop64CallOther();
+	popCallOther(64:4);
 	ret64 = *:8 SP;
 	SP = SP + 8; 
 }
@@ -173,7 +171,9 @@ inc_indent: " . "^inc_indent is inc_indent [ indent_lvl = indent_lvl-1; ]{}
 :""^inc_indent^"if" "blocktype="^ULeb128 is opc=0x04; ULeb128; $(INC_INDENT) unimpl
 :""^inc_indent^"else" is opc=0x05; inc_indent unimpl
 
-:""^indent^"end" is opc=0x0b; indent_lvl=0; indent unimpl
+:""^indent^"end" is opc=0x0b; indent_lvl=0; indent {
+	return [LR];
+}
 :""^indent^"end" is opc=0x0b; indent [ indent_lvl = indent_lvl - 1; globalset(inst_next, indent_lvl); ] unimpl
 
 :""^indent^"br" ULeb128 is opc=0x0c; ULeb128; indent unimpl
@@ -196,15 +196,20 @@ inc_indent: " . "^inc_indent is inc_indent [ indent_lvl = indent_lvl-1; ]{}
 #TODO: select t* 0x1c
 
 :""^indent^"local.get" localidx is opc=0x20; localidx; indent {
-	val:8 = get_local(localidx);
+	val:8 = *[register] (localidx:2 * 8);
 	push64(val);
 }
 :""^indent^"local.set" localidx is opc=0x21; localidx; indent {
 	val:8 = 0;
 	pop64(val);
-	set_local(localidx, val);
+	*[register] (localidx:2 * 8) = val;
 }
-:""^indent^"local.tee" localidx is opc=0x22; localidx; indent unimpl
+:""^indent^"local.tee" localidx is opc=0x22; localidx; indent {
+	val:8 = 0;
+	pop64(val);
+	*[register] (localidx:2 * 8) = val;
+	push64(val);
+}
 :""^indent^"global.get" globalidx is opc=0x23; globalidx; indent {
 	val:8 = get_global(globalidx);
 	push64(val);

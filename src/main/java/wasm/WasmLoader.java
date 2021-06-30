@@ -147,9 +147,11 @@ public class WasmLoader extends AbstractLibrarySupportLoader {
 	}
 
 	private String getMethodName(WasmExportSection exports, int id) {
-		WasmExportEntry entry = exports.findMethod(id);
-		if (entry != null) {
-			return entry.getName();
+		if(exports != null) {
+			WasmExportEntry entry = exports.findMethod(id);
+			if (entry != null) {
+				return entry.getName();
+			}
 		}
 		return "Method_" + id;
 	}
@@ -197,13 +199,20 @@ public class WasmLoader extends AbstractLibrarySupportLoader {
 						//followed by an index for each function in the Function Section, 
 						WasmSection imports = module.getSection(WasmSectionId.SEC_IMPORT);
 						int imports_offset = imports == null? 0 : ((WasmImportSection)imports.getPayload()).getCount();
-						program.getFunctionManager().createFunction(getMethodName((WasmExportSection)module.getSection(WasmSectionId.SEC_EXPORT).getPayload(), i + imports_offset), methodAddress, new AddressSet(methodAddress, methodend), SourceType.ANALYSIS);
+						WasmSection exports = module.getSection(WasmSectionId.SEC_EXPORT);
+						String methodName = getMethodName(
+								exports == null? null: (WasmExportSection)exports.getPayload(), 
+								i + imports_offset);
+						program.getFunctionManager().createFunction(
+								methodName, methodAddress, 
+								new AddressSet(methodAddress, methodend), SourceType.ANALYSIS);
+						program.getSymbolTable().createLabel(methodAddress, methodName, SourceType.ANALYSIS);
 						lookupOffset += 4;
 					}
 				}
 			}
 		} catch (Exception e) {
-			log.appendException( e );
+			log.appendException(e);
 		}
 	}
 

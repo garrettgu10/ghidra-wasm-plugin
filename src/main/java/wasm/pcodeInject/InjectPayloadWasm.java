@@ -1,12 +1,17 @@
 package wasm.pcodeInject;
 
+import ghidra.app.plugin.processors.sleigh.SleighLanguage;
 import ghidra.program.model.lang.InjectPayloadCallother;
 
 public class InjectPayloadWasm extends InjectPayloadCallother {
 
-	public InjectPayloadWasm(String sourceName) {
+	protected SleighLanguage language;
+	protected long uniqueBase;
+
+	public InjectPayloadWasm(String sourceName, SleighLanguage language, long uniqBase) {
 		super(sourceName);
-		// TODO Auto-generated constructor stub
+		this.language = language;
+		this.uniqueBase = uniqBase;
 	}
 
 }

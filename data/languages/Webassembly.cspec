@@ -32,16 +32,14 @@
       </output>
     </prototype>
   </default_proto>
-  <callotherfixup targetop="pop32CallOther">
-  	<pcode dynamic="true" />
+  <callotherfixup targetop="popCallOther">
+  	<pcode dynamic="true">
+  	  <input name="bitsize_push" />
+  	</pcode>
   </callotherfixup>
-  <callotherfixup targetop="push32CallOther">
-  	<pcode dynamic="true" />
-  </callotherfixup>
-  <callotherfixup targetop="pop64CallOther">
-  	<pcode dynamic="true" />
-  </callotherfixup>
-  <callotherfixup targetop="push64CallOther">
-  	<pcode dynamic="true" />
+  <callotherfixup targetop="pushCallOther">
+  	<pcode dynamic="true">
+  	  <input name="bitsize_push" />
+  	</pcode>
   </callotherfixup>
 </compiler_spec>
