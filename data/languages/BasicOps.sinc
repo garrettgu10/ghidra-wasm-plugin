@@ -1,26 +1,133 @@
-:""^indent^"i32.load" memalign memoffset is opc=0x28; memalign; memoffset; indent unimpl
-:""^indent^"i64.load" memalign memoffset is opc=0x29; memalign; memoffset; indent unimpl
-:""^indent^"f32.load" memalign memoffset is opc=0x2A; memalign; memoffset; indent unimpl
-:""^indent^"f64.load" memalign memoffset is opc=0x2B; memalign; memoffset; indent unimpl
-:""^indent^"i32.load8_s" memalign memoffset is opc=0x2C; memalign; memoffset; indent unimpl
-:""^indent^"i32.load8_u" memalign memoffset is opc=0x2D; memalign; memoffset; indent unimpl
-:""^indent^"i32.load16_s" memalign memoffset is opc=0x2E; memalign; memoffset; indent unimpl
-:""^indent^"i32.load16_u" memalign memoffset is opc=0x2F; memalign; memoffset; indent unimpl
-:""^indent^"i64.load8_s" memalign memoffset is opc=0x30; memalign; memoffset; indent unimpl
-:""^indent^"i64.load8_u" memalign memoffset is opc=0x31; memalign; memoffset; indent unimpl
-:""^indent^"i64.load16_s" memalign memoffset is opc=0x32; memalign; memoffset; indent unimpl
-:""^indent^"i64.load16_u" memalign memoffset is opc=0x33; memalign; memoffset; indent unimpl
-:""^indent^"i64.load32_s" memalign memoffset is opc=0x34; memalign; memoffset; indent unimpl
-:""^indent^"i64.load32_u" memalign memoffset is opc=0x35; memalign; memoffset; indent unimpl
-:""^indent^"i32.store" memalign memoffset is opc=0x36; memalign; memoffset; indent unimpl
-:""^indent^"i64.store" memalign memoffset is opc=0x37; memalign; memoffset; indent unimpl
-:""^indent^"f32.store" memalign memoffset is opc=0x38; memalign; memoffset; indent unimpl
-:""^indent^"f64.store" memalign memoffset is opc=0x39; memalign; memoffset; indent unimpl
-:""^indent^"i32.store8" memalign memoffset is opc=0x3A; memalign; memoffset; indent unimpl
-:""^indent^"i32.store16" memalign memoffset is opc=0x3B; memalign; memoffset; indent unimpl
-:""^indent^"i64.store8" memalign memoffset is opc=0x3C; memalign; memoffset; indent unimpl
-:""^indent^"i64.store16" memalign memoffset is opc=0x3D; memalign; memoffset; indent unimpl
-:""^indent^"i64.store32" memalign memoffset is opc=0x3E; memalign; memoffset; indent unimpl
+:""^indent^"i32.load" memalign memoffset is opc=0x28; memalign; memoffset; indent {
+	loaded:4 = 0;
+	load32(memoffset, loaded);
+	push32(loaded);
+}
+:""^indent^"i64.load" memalign memoffset is opc=0x29; memalign; memoffset; indent {
+	loaded:8 = 0;
+	load64(memoffset, loaded);
+	push64(loaded);
+}
+:""^indent^"f32.load" memalign memoffset is opc=0x2A; memalign; memoffset; indent {
+	loaded:4 = 0;
+	load32(memoffset, loaded);
+	push32(loaded);
+}
+:""^indent^"f64.load" memalign memoffset is opc=0x2B; memalign; memoffset; indent {
+	loaded:8 = 0;
+	load64(memoffset, loaded);
+	push64(loaded);
+}
+:""^indent^"i32.load8_s" memalign memoffset is opc=0x2C; memalign; memoffset; indent {
+	loaded:1 = 0;
+	load8(memoffset, loaded);
+	ext:4 = sext(loaded);
+	push32(ext);
+}
+:""^indent^"i32.load8_u" memalign memoffset is opc=0x2D; memalign; memoffset; indent {
+	loaded:1 = 0;
+	load8(memoffset, loaded);
+	ext:4 = zext(loaded);
+	push32(ext);
+}
+:""^indent^"i32.load16_s" memalign memoffset is opc=0x2E; memalign; memoffset; indent {
+	loaded:2 = 0;
+	load16(memoffset, loaded);
+	ext:4 = sext(loaded);
+	push32(ext);
+}
+:""^indent^"i32.load16_u" memalign memoffset is opc=0x2F; memalign; memoffset; indent {
+	loaded:2 = 0;
+	load16(memoffset, loaded);
+	ext:4 = zext(loaded);
+	push32(ext);
+}
+:""^indent^"i64.load8_s" memalign memoffset is opc=0x30; memalign; memoffset; indent {
+	loaded:1 = 0;
+	load8(memoffset, loaded);
+	ext:8 = sext(loaded);
+	push64(ext);
+}
+:""^indent^"i64.load8_u" memalign memoffset is opc=0x31; memalign; memoffset; indent {
+	loaded:1 = 0;
+	load8(memoffset, loaded);
+	ext:8 = zext(loaded);
+	push64(ext);
+}
+:""^indent^"i64.load16_s" memalign memoffset is opc=0x32; memalign; memoffset; indent {
+	loaded:2 = 0;
+	load16(memoffset, loaded);
+	ext:8 = sext(loaded);
+	push64(ext);
+}
+:""^indent^"i64.load16_u" memalign memoffset is opc=0x33; memalign; memoffset; indent {
+	loaded:2 = 0;
+	load16(memoffset, loaded);
+	ext:8 = zext(loaded);
+	push64(ext);
+}
+:""^indent^"i64.load32_s" memalign memoffset is opc=0x34; memalign; memoffset; indent {
+	loaded:4 = 0;
+	load32(memoffset, loaded);
+	ext:8 = sext(loaded);
+	push64(ext);
+}
+:""^indent^"i64.load32_u" memalign memoffset is opc=0x35; memalign; memoffset; indent {
+	loaded:4 = 0;
+	load32(memoffset, loaded);
+	ext:8 = zext(loaded);
+	push64(ext);
+}
+:""^indent^"i32.store" memalign memoffset is opc=0x36; memalign; memoffset; indent {
+	tostore:4 = 0;
+	pop32(tostore);
+	store32(memoffset, tostore);
+}
+:""^indent^"i64.store" memalign memoffset is opc=0x37; memalign; memoffset; indent {
+	tostore:8 = 0;
+	pop64(tostore);
+	store64(memoffset, tostore);
+}
+:""^indent^"f32.store" memalign memoffset is opc=0x38; memalign; memoffset; indent {
+	tostore:4 = 0;
+	pop32(tostore);
+	store32(memoffset, tostore);
+}
+:""^indent^"f64.store" memalign memoffset is opc=0x39; memalign; memoffset; indent {
+	tostore:8 = 0;
+	pop64(tostore);
+	store64(memoffset, tostore);
+}
+:""^indent^"i32.store8" memalign memoffset is opc=0x3A; memalign; memoffset; indent {
+	tostore:4 = 0;
+	pop32(tostore);
+	truncated:1 = tostore[0,7];
+	store8(memoffset, truncated);
+}
+:""^indent^"i32.store16" memalign memoffset is opc=0x3B; memalign; memoffset; indent {
+	tostore:4 = 0;
+	pop32(tostore);
+	truncated:2 = tostore[0,15];
+	store16(memoffset, truncated);
+}
+:""^indent^"i64.store8" memalign memoffset is opc=0x3C; memalign; memoffset; indent {
+	tostore:8 = 0;
+	pop64(tostore);
+	truncated:1 = tostore[0,7];
+	store8(memoffset, truncated);
+}
+:""^indent^"i64.store16" memalign memoffset is opc=0x3D; memalign; memoffset; indent {
+	tostore:8 = 0;
+	pop64(tostore);
+	truncated:2 = tostore[0,15];
+	store16(memoffset, truncated);
+}
+:""^indent^"i64.store32" memalign memoffset is opc=0x3E; memalign; memoffset; indent {
+	tostore:8 = 0;
+	pop64(tostore);
+	truncated:4 = tostore[0,31];
+	store32(memoffset, truncated);
+}
 :""^indent^"i32.eqz"  is opc=0x45; indent {
     x0:4 = 0;
     pop32(x0);
@@ -842,7 +949,7 @@
 	push64(res);
 }
 :""^indent^"i32.reinterpret_f32"  is opc=0xBC; indent {
-	# No need to define anything since stack is untyped
+	# No need to do anything since our stack is untyped
 }
 :""^indent^"i64.reinterpret_f64"  is opc=0xBD; indent {}
 :""^indent^"f32.reinterpret_i32"  is opc=0xBE; indent {}

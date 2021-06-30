@@ -12,33 +12,107 @@ define token byteval (8)
 # Macros
 ################################################################
 
+# These pcodeop's have NOP semantics, they just signal to the pre-decompiler that a push or pop was performed
+define pcodeop push32CallOther;
+define pcodeop pop32CallOther;
+define pcodeop push64CallOther;
+define pcodeop pop64CallOther;
+
 macro push32(val32) {
-	SP = SP - 4;
-	*:4 SP = val32; 
+	push32CallOther();
+	val64:8 = zext(val32);
+	SP = SP - 8;
+	*:8 SP = val64; 
 }
 
 macro pop32(ret32) {
+	pop32CallOther();
 	ret32 = *:4 SP;
-	SP = SP + 4; 
+	SP = SP + 8; 
 }
 
 macro push64(val64) {
+	push64CallOther();
 	SP = SP - 8;
 	*:8 SP = val64; 
 }
 
 macro pop64(ret64) {
+	pop64CallOther();
 	ret64 = *:8 SP;
 	SP = SP + 8; 
 }
+
+macro load8(memoffset, dest) {
+	x0:4 = 0;
+	pop32(x0);
+	addr:4 = memoffset[0,31] + x0;
+	dest = *[mem0]:1 addr;
+}
+
+macro load16(memoffset, dest) {
+	x0:4 = 0;
+	pop32(x0);
+	addr:4 = memoffset[0,31] + x0;
+	dest = *[mem0]:2 addr;
+}
+
+macro load32(memoffset, dest) {
+	x0:4 = 0;
+	pop32(x0);
+	addr:4 = memoffset[0,32] + x0;
+	dest = *[mem0]:4 addr;
+}
+
+macro load64(memoffset, dest) {
+	x0:4 = 0;
+	pop32(x0);
+	addr:4 = memoffset[0,31] + x0;
+	dest = *[mem0]:8 addr;
+}
+
+macro store8(memoffset, val) {
+	x0:4 = 0;
+	pop32(x0);
+	addr:4 = memoffset[0,31] + x0;
+	*[mem0]:1 addr = val;
+}
+
+macro store16(memoffset, val) {
+	x0:4 = 0;
+	pop32(x0);
+	addr:4 = memoffset[0,31] + x0;
+	*[mem0]:2 addr = val;
+}
+
+macro store32(memoffset, val) {
+	x0:4 = 0;
+	pop32(x0);
+	addr:4 = memoffset[0,31] + x0;
+	*[mem0]:4 addr = val;
+}
+
+macro store64(memoffset, val) {
+	x0:4 = 0;
+	pop32(x0);
+	addr:4 = memoffset[0,31] + x0;
+	*[mem0]:8 addr = val;
+}
+
 
 ################################################################
 
 define pcodeop trap;
 define pcodeop get_global;
+define pcodeop set_global;
 define pcodeop popcnt;
 define pcodeop clz;
 define pcodeop ctz;
+define pcodeop br_if;
+define pcodeop set_local;
+define pcodeop get_local;
+define pcodeop start_block;
+define pcodeop start_loop;
 
 @include "Leb128.sinc"
 
@@ -58,20 +132,19 @@ tableidx: ULeb128 is ULeb128 {
 	export ULeb128;
 }
 
-elemidx: ULeb128 is ULeb128 {
-	export ULeb128;
-}
-
 reftype: "reftype="^bytev is bytev {
-	export bytev;
+	val:1 = bytev;
+	export val;
 }
 
 memalign: "align="^ULeb128 is ULeb128 {
-	export ULeb128;
+	align:8 = ULeb128;
+	export align;
 }
 
 memoffset: "offset="^ULeb128 is ULeb128 {
-	export ULeb128;
+	off:8 = ULeb128;
+	export off;
 }
 
 ################################################################
@@ -91,8 +164,12 @@ inc_indent: " . "^inc_indent is inc_indent [ indent_lvl = indent_lvl-1; ]{}
 
 :""^indent^"nop" is opc=0x01; indent {}
 
-:""^inc_indent^"block" "blocktype="^ULeb128 is opc=0x02; ULeb128; $(INC_INDENT) unimpl
-:""^inc_indent^"loop" "blocktype="^ULeb128 is opc=0x03; ULeb128; $(INC_INDENT) unimpl
+:""^inc_indent^"block" "blocktype="^ULeb128 is opc=0x02; ULeb128; $(INC_INDENT) {
+	start_block();
+}
+:""^inc_indent^"loop" "blocktype="^ULeb128 is opc=0x03; ULeb128; $(INC_INDENT) {
+	start_loop();
+}
 :""^inc_indent^"if" "blocktype="^ULeb128 is opc=0x04; ULeb128; $(INC_INDENT) unimpl
 :""^inc_indent^"else" is opc=0x05; inc_indent unimpl
 
@@ -100,7 +177,9 @@ inc_indent: " . "^inc_indent is inc_indent [ indent_lvl = indent_lvl-1; ]{}
 :""^indent^"end" is opc=0x0b; indent [ indent_lvl = indent_lvl - 1; globalset(inst_next, indent_lvl); ] unimpl
 
 :""^indent^"br" ULeb128 is opc=0x0c; ULeb128; indent unimpl
-:""^indent^"br_if" ULeb128 is opc=0x0d; ULeb128; indent unimpl
+:""^indent^"br_if" ULeb128 is opc=0x0d; ULeb128; indent {
+	br_if(ULeb128);
+}
 #TODO: br_table
 #:""^indent^"br_table" is opc=0x0e; ULeb128; indent [br_table_count=ULeb128;] unimpl
 :""^indent^"return" is opc=0x0f; indent unimpl
@@ -116,14 +195,25 @@ inc_indent: " . "^inc_indent is inc_indent [ indent_lvl = indent_lvl-1; ]{}
 
 #TODO: select t* 0x1c
 
-:""^indent^"local.get" localidx is opc=0x20; localidx; indent unimpl
-:""^indent^"local.set" localidx is opc=0x21; localidx; indent unimpl
+:""^indent^"local.get" localidx is opc=0x20; localidx; indent {
+	val:8 = get_local(localidx);
+	push64(val);
+}
+:""^indent^"local.set" localidx is opc=0x21; localidx; indent {
+	val:8 = 0;
+	pop64(val);
+	set_local(localidx, val);
+}
 :""^indent^"local.tee" localidx is opc=0x22; localidx; indent unimpl
 :""^indent^"global.get" globalidx is opc=0x23; globalidx; indent {
 	val:8 = get_global(globalidx);
 	push64(val);
 }
-:""^indent^"global.set" globalidx is opc=0x24; globalidx; indent unimpl
+:""^indent^"global.set" globalidx is opc=0x24; globalidx; indent {
+	val:8 = 0;
+	pop64(val);
+	set_global(globalidx, val);
+}
 
 #TODO: table instructions
 :""^indent^"i32.const" ULeb128 is opc=0x41; ULeb128; indent {
