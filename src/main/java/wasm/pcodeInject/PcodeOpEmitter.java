@@ -126,7 +126,7 @@ public class PcodeOpEmitter {
 		}
 	}
 	
-	public void emitTestOp() {
+	public void emitNop() {
 		Varnode[] in = new Varnode[2];
 		in[0] = spVarnode;
 		in[1] = getConstant(0, spVarnode.getSize());

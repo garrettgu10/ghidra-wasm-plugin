@@ -17,7 +17,11 @@ package wasm;
 
 import java.io.IOException;
 
+import ghidra.app.decompiler.DecompInterface;
+import ghidra.app.decompiler.DecompileOptions;
+import ghidra.app.decompiler.DecompileResults;
 import ghidra.app.services.AbstractAnalyzer;
+import ghidra.app.services.AnalysisPriority;
 import ghidra.app.services.AnalyzerType;
 import ghidra.app.util.bin.BinaryReader;
 import ghidra.app.util.bin.ByteProvider;
@@ -27,6 +31,7 @@ import ghidra.file.formats.android.dex.format.DexHeader;
 import ghidra.framework.options.Options;
 import ghidra.program.model.address.Address;
 import ghidra.program.model.address.AddressSetView;
+import ghidra.program.model.listing.Function;
 import ghidra.program.model.listing.Program;
 import ghidra.program.model.symbol.Namespace;
 import ghidra.program.model.symbol.SourceType;
@@ -34,6 +39,7 @@ import ghidra.program.model.symbol.Symbol;
 import ghidra.util.exception.CancelledException;
 import ghidra.util.exception.InvalidInputException;
 import ghidra.util.task.TaskMonitor;
+import wasm.analysis.WasmAnalysisState;
 import wasm.file.WasmModule;
 import wasm.format.Utils;
 import wasm.format.WasmHeader;
@@ -48,74 +54,54 @@ import wasm.format.sections.structures.WasmFunctionBody;
 public class WasmAnalyzer extends AbstractAnalyzer {
 
 	public WasmAnalyzer() {
-
-		// TODO: Name the analyzer and give it a description.
-
-		super("Wasm Pre-Decompiler", "Extracts exported methods from wasm file", AnalyzerType.BYTE_ANALYZER);
+		super("Wasm Pre-Decompiler", 
+				"Resolves branch targets and implicit pops for use during decompilation", 
+				AnalyzerType.BYTE_ANALYZER);
+		setDefaultEnablement(true);
+		setSupportsOneTimeAnalysis(false);
+		setPriority(AnalysisPriority.DISASSEMBLY.before());
 	}
 
 	@Override
 	public boolean getDefaultEnablement(Program program) {
-
-		// TODO: Return true if analyzer should be enabled by default
-
-		return false;
+		return canAnalyze(program);
 	}
 
 	@Override
 	public boolean canAnalyze(Program program) {
-
-		// TODO: Examine 'program' to determine of this analyzer should analyze it.  Return true
-		// if it can.
-
-		return true;
+		return program.getLanguage().getProcessor().toString().toLowerCase().equals("webassembly");
 	}
 
 	@Override
 	public void registerOptions(Options options, Program program) {
-
-		// TODO: If this analyzer has custom options, register them here
-
-		options.registerOption("Option name goes here", false, null,
-			"Option description goes here");
-	}
-	
-	private Symbol createMethodSymbol(Program program, Address methodAddress, String methodName,
-			Namespace classNameSpace, MessageLog log) {
-		program.getSymbolTable().addExternalEntryPoint(methodAddress);
-		try {
-			return program.getSymbolTable().createLabel(methodAddress, methodName, classNameSpace,
-				SourceType.ANALYSIS);
-		}
-		catch (InvalidInputException e) {
-			log.appendException(e);
-			return null;
-		}
+		//no options needed
 	}
 
 	@Override
 	public boolean added(Program program, AddressSetView set, TaskMonitor monitor, MessageLog log)
 			throws CancelledException {
-		ByteProvider provider = new MemoryByteProvider(program.getMemory(), program.getMinAddress());
-		BinaryReader reader = new BinaryReader(provider, true);
-		try {
-			WasmModule header = new WasmModule(reader);
-			for (WasmSection section: header.getSections()) {
-				if (section.getId() == WasmSectionId.SEC_CODE) {
-					WasmCodeSection codeSection = (WasmCodeSection)section.getPayload();
-					long code_offset = section.getPayloadOffset();
-					for (WasmFunctionBody method: codeSection.getFunctions()) {
-						long method_offset = code_offset + method.getOffset();
-						Address methodAddress = Utils.toAddr( program, Utils.METHOD_ADDRESS + method_offset );
-						createMethodSymbol(program, methodAddress, "R", null, log);
-					}
-				}
-			}
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+		WasmAnalysisState state = WasmAnalysisState.getState(program);
+		
+		DecompileOptions options = new DecompileOptions();
+    	options.setWARNCommentIncluded(true);
+    	DecompInterface ifc = new DecompInterface();
+    	ifc.setOptions(options);
+    	
+    	if (!ifc.openProgram(program)) {
+			throw new RuntimeException("Unable to decompile: "+ifc.getLastMessage());
 		}
-
+    	
+    	ifc.setSimplificationStyle("firstpass");
+		
+		for(Function f : program.getFunctionManager().getFunctions(true)) {
+			state.startCollectingMetas(f);
+	    	
+	    	DecompileResults res = ifc.decompileFunction(f, 30, null);
+			
+			state.stopCollectingMetas();
+			
+			System.out.println(state.getFuncState(f));
+		}
 
 		return false;
 	}

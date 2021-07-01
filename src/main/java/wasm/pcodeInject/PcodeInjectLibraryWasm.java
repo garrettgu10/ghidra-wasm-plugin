@@ -6,6 +6,7 @@ import java.util.Map;
 import ghidra.app.plugin.processors.sleigh.SleighLanguage;
 import ghidra.program.model.lang.InjectPayload;
 import ghidra.program.model.lang.PcodeInjectLibrary;
+import wasm.analysis.MetaInstruction;
 
 public class PcodeInjectLibraryWasm extends PcodeInjectLibrary{
 	
@@ -13,7 +14,7 @@ public class PcodeInjectLibraryWasm extends PcodeInjectLibrary{
 	
 	public static final String POP = "popCallOther";
 	public static final String PUSH = "pushCallOther";
-	public static final String TEST = "testCallOther";
+	public static final String BR = "brCallOther";
 	
 	public static final String SOURCENAME = "wasmsource";
 	
@@ -31,9 +32,9 @@ public class PcodeInjectLibraryWasm extends PcodeInjectLibrary{
 		nextUniqueBase = this.uniqueBase;
 		
 		implementedOps = new HashMap<>();
-		implementedOps.put(POP, new InjectNop(SOURCENAME, l, getNextUniqueBase()));
-		implementedOps.put(PUSH, new InjectNop(SOURCENAME, l, getNextUniqueBase()));
-		implementedOps.put(TEST, new InjectNop(SOURCENAME, l, getNextUniqueBase()));
+		implementedOps.put(POP, new InjectMeta(SOURCENAME, l, getNextUniqueBase(), MetaInstruction.Type.POP));
+		implementedOps.put(PUSH, new InjectMeta(SOURCENAME, l, getNextUniqueBase(), MetaInstruction.Type.PUSH));
+		implementedOps.put(BR, new InjectMeta(SOURCENAME, l, getNextUniqueBase(), MetaInstruction.Type.BR));
 	}
 	
 	@Override

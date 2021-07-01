@@ -42,4 +42,9 @@
   	  <input name="bitsize_push" />
   	</pcode>
   </callotherfixup>
+  <callotherfixup targetop="brCallOther">
+  	<pcode dynamic="true">
+  	  <input name="lvl_br" />
+  	</pcode>
+  </callotherfixup>
 </compiler_spec>

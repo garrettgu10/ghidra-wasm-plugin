@@ -16,6 +16,9 @@ define token byteval (8)
 define pcodeop pushCallOther;
 define pcodeop popCallOther;
 
+# These pcodeop's do not have NOP semantics, they are dynamically injected into by PcodeInjectLibraryWasm
+define pcodeop brCallOther;
+
 macro push32(val32) {
 	pushCallOther(32:4);
 	val64:8 = zext(val32);
@@ -176,13 +179,17 @@ inc_indent: " . "^inc_indent is inc_indent [ indent_lvl = indent_lvl-1; ]{}
 }
 :""^indent^"end" is opc=0x0b; indent [ indent_lvl = indent_lvl - 1; globalset(inst_next, indent_lvl); ] unimpl
 
-:""^indent^"br" ULeb128 is opc=0x0c; ULeb128; indent unimpl
+:""^indent^"br" ULeb128 is opc=0x0c; ULeb128; indent {
+	brCallOther();
+}
 :""^indent^"br_if" ULeb128 is opc=0x0d; ULeb128; indent {
 	br_if(ULeb128);
 }
 #TODO: br_table
 #:""^indent^"br_table" is opc=0x0e; ULeb128; indent [br_table_count=ULeb128;] unimpl
-:""^indent^"return" is opc=0x0f; indent unimpl
+:""^indent^"return" is opc=0x0f; indent {
+	return [LR];
+}
 :""^indent^"call" ULeb128 is opc=0x10; ULeb128; indent unimpl
 :""^indent^"call_indirect" typeidx tableidx is opc=0x11; typeidx; tableidx; indent unimpl
 
