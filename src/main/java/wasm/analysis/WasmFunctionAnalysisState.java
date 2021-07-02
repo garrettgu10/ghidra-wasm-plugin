@@ -67,7 +67,7 @@ public class WasmFunctionAnalysisState {
 				}
 				break;
 			case ELSE:
-				IfMetaInstruction ifStmt = (IfMetaInstruction) controlStack.remove(controlStack.size() - 1);
+				IfMetaInstruction ifStmt = (IfMetaInstruction) controlStack.get(controlStack.size() - 1);
 				ElseMetaInstruction elseStmt = (ElseMetaInstruction)instr;
 				ifStmt.elseInstr = elseStmt;
 				elseStmt.ifInstr = ifStmt;

@@ -19,6 +19,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.*;
 
+import agent.gdb.pty.linux.Util;
 import ghidra.app.util.MemoryBlockUtils;
 import ghidra.app.util.Option;
 import ghidra.app.util.bin.BinaryReader;
@@ -78,7 +79,7 @@ public class WasmLoader extends AbstractLibrarySupportLoader {
 		WasmHeader header = new WasmHeader(reader);
 		
 		if(WasmConstants.WASM_MAGIC_BASE.equals(new String(header.getMagic()))) {
-			loadSpecs.add(new LoadSpec(this, 0,
+			loadSpecs.add(new LoadSpec(this, 0x10000000,
 					new LanguageCompilerSpecPair("Wasm:LE:32:default", "default"), true));
 		}
 
@@ -116,7 +117,7 @@ public class WasmLoader extends AbstractLibrarySupportLoader {
 		boolean w = true;
 		boolean x = true;
 		String BLOCK_SOURCE_NAME = "Wasm Header";
-		Address start = program.getAddressFactory().getDefaultAddressSpace().getAddress( 0x0 );
+		Address start = program.getAddressFactory().getDefaultAddressSpace().getAddress( Utils.HEADER_BASE );
 		try {
 			MemoryBlockUtils.createInitializedBlock(program, false, ".header", start, reader, 8, "", BLOCK_SOURCE_NAME, r, w, x, log, monitor);
 			createData(program, program.getListing(), start, header.toDataType());
@@ -132,7 +133,7 @@ public class WasmLoader extends AbstractLibrarySupportLoader {
 		boolean x = true;
 		String BLOCK_SOURCE_NAME = "Wasm Section";
 		for (WasmSection section: module.getSections()) {
-			Address start = program.getAddressFactory().getDefaultAddressSpace().getAddress(section.getSectionOffset());
+			Address start = program.getAddressFactory().getDefaultAddressSpace().getAddress(Utils.HEADER_BASE + section.getSectionOffset());
 			MemoryBlockUtils.createInitializedBlock(program, false, section.getPayload().getName(), start, reader, section.getSectionSize(), "", BLOCK_SOURCE_NAME, r, w, x, log, monitor);
 			createData(program, program.getListing(), start, section.toDataType());			
 		}
@@ -156,7 +157,6 @@ public class WasmLoader extends AbstractLibrarySupportLoader {
 		monitor.setMessage( "Wasm Loader: Start loading" );
 		
 		try {
-			Address start = program.getAddressFactory().getDefaultAddressSpace().getAddress( 0x0 );
 			long length = provider.length();
 	
 			InputStream inputStream;
@@ -208,7 +208,6 @@ public class WasmLoader extends AbstractLibrarySupportLoader {
 			DomainObject domainObject, boolean isLoadIntoProgram) {
 		List<Option> list =
 			super.getDefaultOptions(provider, loadSpec, domainObject, isLoadIntoProgram);
-		list.add(new Option("Option name goes here", "Default option value goes here"));
 
 		return list;
 	}
