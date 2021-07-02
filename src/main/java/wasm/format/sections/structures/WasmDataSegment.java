@@ -31,7 +31,9 @@ public class WasmDataSegment implements StructConverter {
 		structure.add(index.toDataType(), index.toDataType().getLength(), "index", null);
 		structure.add(DWORD, 4, "offset", null);
 		structure.add(size.toDataType(), size.toDataType().getLength(), "size", null);
-		structure.add(new ArrayDataType(BYTE, data.length, BYTE.getLength()), "data", null);
+		if(data.length != 0) {
+			structure.add(new ArrayDataType(BYTE, data.length, BYTE.getLength()), "data", null);
+		}
 		return structure;
 	}
 

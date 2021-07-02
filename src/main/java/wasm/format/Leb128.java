@@ -225,6 +225,6 @@ public final class Leb128 implements StructConverter {
 			case 4:
 				return ghidra.app.util.bin.StructConverter.DWORD; 
 		}
-		return null;		
+		return ghidra.app.util.bin.StructConverter.STRING;
 	}
 }

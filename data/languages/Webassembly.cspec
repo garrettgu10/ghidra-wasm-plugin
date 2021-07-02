@@ -5,7 +5,7 @@
 <compiler_spec>
    <data_organization>
     <char_type signed="false" />
-    <char_size value="2" />
+    <char_size value="1" />
     <short_size value="2" />
     <pointer_size value="4"/>
     <integer_size value = "4"/>
