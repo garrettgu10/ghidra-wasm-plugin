@@ -3,6 +3,7 @@ package wasm.format.sections;
 import java.io.IOException;
 
 import ghidra.app.util.bin.BinaryReader;
+import ghidra.app.util.bin.StructConverter;
 import ghidra.program.model.data.DataType;
 import ghidra.program.model.data.Structure;
 import ghidra.program.model.data.StructureDataType;
@@ -27,12 +28,10 @@ public class WasmCustomSection implements WasmPayload {
 
 
 	@Override
-	public DataType toDataType() throws DuplicateNameException, IOException {
-		Structure structure = new StructureDataType("CustomSection", 0);
+	public void addToStructure(Structure structure) throws IllegalArgumentException, DuplicateNameException, IOException {
 		structure.add(namelen.toDataType(), "name_len", null);
-		structure.add(STRING, name.length, "name", null);
-		structure.add(STRING, contents.length, "contents", null);
-		return structure;
+		structure.add(StructConverter.STRING, name.length, "name", null);
+		structure.add(StructConverter.STRING, contents.length, "contents", null);
 	}
 
 	@Override

@@ -29,13 +29,11 @@ public class WasmLinearMemorySection implements WasmPayload {
 
 
 	@Override
-	public DataType toDataType() throws DuplicateNameException, IOException {
-		Structure structure = new StructureDataType("MemorySection", 0);
+	public void addToStructure(Structure structure) throws IllegalArgumentException, DuplicateNameException, IOException {
 		structure.add(count.toDataType(), count.toDataType().getLength(), "count", null);
 		for (int i = 0; i < count.getValue(); ++i) {
 			structure.add(limits.get(i).toDataType(), limits.get(i).toDataType().getLength(), "memory_type_"+i, null);
 		}
-		return structure;
 	}
 
 	@Override

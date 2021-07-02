@@ -96,11 +96,11 @@ public class WasmAnalyzer extends AbstractAnalyzer {
 		for(Function f : program.getFunctionManager().getFunctions(true)) {
 			state.startCollectingMetas(f);
 	    	
-	    	DecompileResults res = ifc.decompileFunction(f, 30, null);
+	    	ifc.decompileFunction(f, 30, null);
 			
 			state.stopCollectingMetas();
 			
-			System.out.println(state.getFuncState(f));
+			state.performResolution();
 		}
 
 		return false;

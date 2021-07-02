@@ -17,9 +17,7 @@ public class WasmGlobalSection implements WasmPayload {
 
 
 	@Override
-	public DataType toDataType() {
-		Structure structure = new StructureDataType("GlobalSection", 0);
-		return structure;
+	public void addToStructure(Structure structure) throws IllegalArgumentException, DuplicateNameException, IOException {
 		
 	}
 

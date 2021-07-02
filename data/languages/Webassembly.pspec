@@ -7,10 +7,13 @@
   	<property key="Analyzers.Wasm Pre-Decompiler" value="true" />
     <property key="pcodeInjectLibraryClass" value="wasm.pcodeInject.PcodeInjectLibraryWasm"/>
   </properties>
+  <inferptrbounds>
+    <range space="ram" first="0" last="0"/>   <!-- Don't try to infer pointers from constants in the body of a function -->
+  </inferptrbounds>
   <programcounter register="PC"/>
   <register_data>
     <register name="SP" group="Alt"/>
-    <register name="l0" group="Alt" />
+    <register name="l0" group="Alt" /> <register name="l1" group="Alt" /> <register name="l2" group="Alt" /> <register name="l3" group="Alt" /> <register name="l4" group="Alt" /> <register name="l5" group="Alt" /> <register name="l6" group="Alt" /> <register name="l7" group="Alt" /> <register name="l8" group="Alt" /> <register name="l9" group="Alt" /> <register name="l10" group="Alt" /> <register name="l11" group="Alt" /> <register name="l12" group="Alt" /> <register name="l13" group="Alt" /> <register name="l14" group="Alt" /> <register name="l15" group="Alt" /> <register name="l16" group="Alt" /> <register name="l17" group="Alt" /> <register name="l18" group="Alt" /> <register name="l19" group="Alt" /> <register name="l20" group="Alt" /> <register name="l21" group="Alt" /> <register name="l22" group="Alt" /> <register name="l23" group="Alt" /> <register name="l24" group="Alt" /> <register name="l25" group="Alt" /> <register name="l26" group="Alt" /> <register name="l27" group="Alt" /> <register name="l28" group="Alt" /> <register name="l29" group="Alt" /> <register name="l30" group="Alt" /> <register name="l31" group="Alt" /> <register name="l32" group="Alt" /> <register name="l33" group="Alt" /> <register name="l34" group="Alt" /> <register name="l35" group="Alt" /> <register name="l36" group="Alt" /> <register name="l37" group="Alt" /> <register name="l38" group="Alt" /> <register name="l39" group="Alt" /> <register name="l40" group="Alt" /> <register name="l41" group="Alt" /> <register name="l42" group="Alt" /> <register name="l43" group="Alt" /> <register name="l44" group="Alt" /> <register name="l45" group="Alt" /> <register name="l46" group="Alt" /> <register name="l47" group="Alt" /> <register name="l48" group="Alt" /> <register name="l49" group="Alt" /> <register name="l50" group="Alt" /> <register name="l51" group="Alt" /> <register name="l52" group="Alt" /> <register name="l53" group="Alt" /> <register name="l54" group="Alt" /> <register name="l55" group="Alt" /> <register name="l56" group="Alt" /> <register name="l57" group="Alt" /> <register name="l58" group="Alt" /> <register name="l59" group="Alt" /> <register name="l60" group="Alt" /> <register name="l61" group="Alt" /> <register name="l62" group="Alt" /> <register name="l63" group="Alt" />
     <register name="ret0" group="Alt" />
   </register_data>
 </processor_spec>

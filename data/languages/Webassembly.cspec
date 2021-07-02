@@ -24,6 +24,195 @@
         <pentry minsize="1" maxsize="8" extension="zero">
           <register name="l0"/>
         </pentry>
+        <pentry minsize="1" maxsize="8" extension="zero">
+          <register name="l1"/>
+        </pentry>
+        <pentry minsize="1" maxsize="8" extension="zero">
+          <register name="l2"/>
+        </pentry>
+        <pentry minsize="1" maxsize="8" extension="zero">
+          <register name="l3"/>
+        </pentry>
+        <pentry minsize="1" maxsize="8" extension="zero">
+          <register name="l4"/>
+        </pentry>
+        <pentry minsize="1" maxsize="8" extension="zero">
+          <register name="l5"/>
+        </pentry>
+        <pentry minsize="1" maxsize="8" extension="zero">
+          <register name="l6"/>
+        </pentry>
+        <pentry minsize="1" maxsize="8" extension="zero">
+          <register name="l7"/>
+        </pentry>
+        <pentry minsize="1" maxsize="8" extension="zero">
+          <register name="l8"/>
+        </pentry>
+        <pentry minsize="1" maxsize="8" extension="zero">
+          <register name="l9"/>
+        </pentry>
+        <pentry minsize="1" maxsize="8" extension="zero">
+          <register name="l10"/>
+        </pentry>
+        <pentry minsize="1" maxsize="8" extension="zero">
+          <register name="l11"/>
+        </pentry>
+        <pentry minsize="1" maxsize="8" extension="zero">
+          <register name="l12"/>
+        </pentry>
+        <pentry minsize="1" maxsize="8" extension="zero">
+          <register name="l13"/>
+        </pentry>
+        <pentry minsize="1" maxsize="8" extension="zero">
+          <register name="l14"/>
+        </pentry>
+        <pentry minsize="1" maxsize="8" extension="zero">
+          <register name="l15"/>
+        </pentry>
+        <pentry minsize="1" maxsize="8" extension="zero">
+          <register name="l16"/>
+        </pentry>
+        <pentry minsize="1" maxsize="8" extension="zero">
+          <register name="l17"/>
+        </pentry>
+        <pentry minsize="1" maxsize="8" extension="zero">
+          <register name="l18"/>
+        </pentry>
+        <pentry minsize="1" maxsize="8" extension="zero">
+          <register name="l19"/>
+        </pentry>
+        <pentry minsize="1" maxsize="8" extension="zero">
+          <register name="l20"/>
+        </pentry>
+        <pentry minsize="1" maxsize="8" extension="zero">
+          <register name="l21"/>
+        </pentry>
+        <pentry minsize="1" maxsize="8" extension="zero">
+          <register name="l22"/>
+        </pentry>
+        <pentry minsize="1" maxsize="8" extension="zero">
+          <register name="l23"/>
+        </pentry>
+        <pentry minsize="1" maxsize="8" extension="zero">
+          <register name="l24"/>
+        </pentry>
+        <pentry minsize="1" maxsize="8" extension="zero">
+          <register name="l25"/>
+        </pentry>
+        <pentry minsize="1" maxsize="8" extension="zero">
+          <register name="l26"/>
+        </pentry>
+        <pentry minsize="1" maxsize="8" extension="zero">
+          <register name="l27"/>
+        </pentry>
+        <pentry minsize="1" maxsize="8" extension="zero">
+          <register name="l28"/>
+        </pentry>
+        <pentry minsize="1" maxsize="8" extension="zero">
+          <register name="l29"/>
+        </pentry>
+        <pentry minsize="1" maxsize="8" extension="zero">
+          <register name="l30"/>
+        </pentry>
+        <pentry minsize="1" maxsize="8" extension="zero">
+          <register name="l31"/>
+        </pentry>
+        <pentry minsize="1" maxsize="8" extension="zero">
+          <register name="l32"/>
+        </pentry>
+        <pentry minsize="1" maxsize="8" extension="zero">
+          <register name="l33"/>
+        </pentry>
+        <pentry minsize="1" maxsize="8" extension="zero">
+          <register name="l34"/>
+        </pentry>
+        <pentry minsize="1" maxsize="8" extension="zero">
+          <register name="l35"/>
+        </pentry>
+        <pentry minsize="1" maxsize="8" extension="zero">
+          <register name="l36"/>
+        </pentry>
+        <pentry minsize="1" maxsize="8" extension="zero">
+          <register name="l37"/>
+        </pentry>
+        <pentry minsize="1" maxsize="8" extension="zero">
+          <register name="l38"/>
+        </pentry>
+        <pentry minsize="1" maxsize="8" extension="zero">
+          <register name="l39"/>
+        </pentry>
+        <pentry minsize="1" maxsize="8" extension="zero">
+          <register name="l40"/>
+        </pentry>
+        <pentry minsize="1" maxsize="8" extension="zero">
+          <register name="l41"/>
+        </pentry>
+        <pentry minsize="1" maxsize="8" extension="zero">
+          <register name="l42"/>
+        </pentry>
+        <pentry minsize="1" maxsize="8" extension="zero">
+          <register name="l43"/>
+        </pentry>
+        <pentry minsize="1" maxsize="8" extension="zero">
+          <register name="l44"/>
+        </pentry>
+        <pentry minsize="1" maxsize="8" extension="zero">
+          <register name="l45"/>
+        </pentry>
+        <pentry minsize="1" maxsize="8" extension="zero">
+          <register name="l46"/>
+        </pentry>
+        <pentry minsize="1" maxsize="8" extension="zero">
+          <register name="l47"/>
+        </pentry>
+        <pentry minsize="1" maxsize="8" extension="zero">
+          <register name="l48"/>
+        </pentry>
+        <pentry minsize="1" maxsize="8" extension="zero">
+          <register name="l49"/>
+        </pentry>
+        <pentry minsize="1" maxsize="8" extension="zero">
+          <register name="l50"/>
+        </pentry>
+        <pentry minsize="1" maxsize="8" extension="zero">
+          <register name="l51"/>
+        </pentry>
+        <pentry minsize="1" maxsize="8" extension="zero">
+          <register name="l52"/>
+        </pentry>
+        <pentry minsize="1" maxsize="8" extension="zero">
+          <register name="l53"/>
+        </pentry>
+        <pentry minsize="1" maxsize="8" extension="zero">
+          <register name="l54"/>
+        </pentry>
+        <pentry minsize="1" maxsize="8" extension="zero">
+          <register name="l55"/>
+        </pentry>
+        <pentry minsize="1" maxsize="8" extension="zero">
+          <register name="l56"/>
+        </pentry>
+        <pentry minsize="1" maxsize="8" extension="zero">
+          <register name="l57"/>
+        </pentry>
+        <pentry minsize="1" maxsize="8" extension="zero">
+          <register name="l58"/>
+        </pentry>
+        <pentry minsize="1" maxsize="8" extension="zero">
+          <register name="l59"/>
+        </pentry>
+        <pentry minsize="1" maxsize="8" extension="zero">
+          <register name="l60"/>
+        </pentry>
+        <pentry minsize="1" maxsize="8" extension="zero">
+          <register name="l61"/>
+        </pentry>
+        <pentry minsize="1" maxsize="8" extension="zero">
+          <register name="l62"/>
+        </pentry>
+        <pentry minsize="1" maxsize="8" extension="zero">
+          <register name="l63"/>
+        </pentry>
       </input>
       <output>
         <pentry minsize="1" maxsize="8" extension="zero">
@@ -44,7 +233,30 @@
   </callotherfixup>
   <callotherfixup targetop="brCallOther">
   	<pcode dynamic="true">
-  	  <input name="lvl_br" />
+  	</pcode>
+  </callotherfixup>
+  <callotherfixup targetop="beginLoopCallOther">
+  	<pcode dynamic="true">
+  	</pcode>
+  </callotherfixup>
+  <callotherfixup targetop="beginBlockCallOther">
+  	<pcode dynamic="true">
+  	</pcode>
+  </callotherfixup>
+  <callotherfixup targetop="endCallOther">
+  	<pcode dynamic="true">
+  	</pcode>
+  </callotherfixup>
+  <callotherfixup targetop="returnCallOther">
+  	<pcode dynamic="true">
+  	</pcode>
+  </callotherfixup>
+  <callotherfixup targetop="ifCallOther">
+  	<pcode dynamic="true">
+  	</pcode>
+  </callotherfixup>
+  <callotherfixup targetop="elseCallOther">
+  	<pcode dynamic="true">
   	</pcode>
   </callotherfixup>
 </compiler_spec>

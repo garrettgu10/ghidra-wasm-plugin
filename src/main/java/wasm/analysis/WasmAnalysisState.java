@@ -27,6 +27,10 @@ public class WasmAnalysisState {
 		return funcStates.get(f);
 	}
 	
+	public boolean collectingMetas() {
+		return currMetaFunc != null;
+	}
+	
 	public void startCollectingMetas(Function f) {
 		this.currMetaFunc = getFuncState(f);
 	}
@@ -36,7 +40,9 @@ public class WasmAnalysisState {
 	}
 	
 	public void performResolution() {
-		
+		for(HashMap.Entry<Function, WasmFunctionAnalysisState> entry: funcStates.entrySet()) {
+			entry.getValue().performResolution();
+		}
 	}
 	
 	public void collectMeta(MetaInstruction meta) {

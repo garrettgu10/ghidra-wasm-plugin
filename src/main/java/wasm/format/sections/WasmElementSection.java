@@ -28,13 +28,11 @@ public class WasmElementSection implements WasmPayload {
 
 
 	@Override
-	public DataType toDataType() throws DuplicateNameException, IOException {
-		Structure structure = new StructureDataType("ElementSection", 0);
+	public void addToStructure(Structure structure) throws IllegalArgumentException, DuplicateNameException, IOException {
 		structure.add(count.toDataType(), count.toDataType().getLength(), "count", null);
 		for (int i = 0; i < count.getValue(); ++i) {
 			structure.add(elements.get(i).toDataType(), elements.get(i).toDataType().getLength(), "element_"+i, null);
 		}
-		return structure;
 	}
 
 	@Override

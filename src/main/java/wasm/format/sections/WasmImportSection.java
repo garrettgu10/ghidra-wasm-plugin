@@ -31,13 +31,11 @@ public class WasmImportSection implements WasmPayload {
 	}
 
 	@Override
-	public DataType toDataType() throws DuplicateNameException, IOException {
-		Structure structure = new StructureDataType("ImportsSection", 0);
+	public void addToStructure(Structure structure) throws IllegalArgumentException, DuplicateNameException, IOException {
 		structure.add(count.toDataType(), count.toDataType().getLength(), "count", null);
 		for (int i = 0; i < count.getValue(); ++i) {
 			structure.add(imports.get(i).toDataType(), imports.get(i).toDataType().getLength(), "import_"+i, null);
 		}
-		return structure;
 	}
 
 	@Override

@@ -30,15 +30,13 @@ public class WasmCodeSection implements WasmPayload {
 	}
 
 	@Override
-	public DataType toDataType() throws DuplicateNameException, IOException {
-		Structure structure = new StructureDataType("CodeSection", 0);
+	public void addToStructure(Structure structure) throws IllegalArgumentException, DuplicateNameException, IOException {
 		structure.add(count.toDataType(), count.toDataType().getLength(), "count", null);
 		int function_id = 0;
 		for (WasmFunctionBody function: functions) {
 			structure.add(function.toDataType(), function.toDataType().getLength(), "function_" + function_id, null);
 			function_id ++;
 		}
-		return structure;
 	}
 
 	@Override

@@ -15,10 +15,7 @@ public class WasmStartSection  implements WasmPayload {
 	}
 
 	@Override
-	public DataType toDataType() {
-		Structure structure = new StructureDataType("StartSection", 0);
-		return structure;
-	}
+	public void addToStructure(Structure structure) throws IllegalArgumentException, DuplicateNameException, IOException {}
 
 	@Override
 	public String getName() {

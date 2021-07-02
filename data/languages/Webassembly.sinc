@@ -12,9 +12,16 @@ define token byteval (8)
 # Macros
 ################################################################
 
-# These pcodeop's have NOP semantics, they just signal to the pre-decompiler that a push or pop was performed
+# These pcodeop's have NOP semantics, they just signal to the analyzer to modify the controlStack and valueStack
 define pcodeop pushCallOther;
 define pcodeop popCallOther;
+define pcodeop beginLoopCallOther;
+define pcodeop beginBlockCallOther;
+define pcodeop endCallOther;
+define pcodeop returnCallOther;
+
+define pcodeop ifCallOther;
+define pcodeop elseCallOther;
 
 # These pcodeop's do not have NOP semantics, they are dynamically injected into by PcodeInjectLibraryWasm
 define pcodeop brCallOther;
@@ -110,10 +117,6 @@ define pcodeop popcnt;
 define pcodeop clz;
 define pcodeop ctz;
 define pcodeop br_if;
-define pcodeop set_local;
-define pcodeop get_local;
-define pcodeop start_block;
-define pcodeop start_loop;
 
 @include "Leb128.sinc"
 
@@ -166,29 +169,41 @@ inc_indent: " . "^inc_indent is inc_indent [ indent_lvl = indent_lvl-1; ]{}
 :""^indent^"nop" is opc=0x01; indent {}
 
 :""^inc_indent^"block" "blocktype="^ULeb128 is opc=0x02; ULeb128; $(INC_INDENT) {
-	start_block();
+	beginBlockCallOther();
 }
 :""^inc_indent^"loop" "blocktype="^ULeb128 is opc=0x03; ULeb128; $(INC_INDENT) {
-	start_loop();
+	beginLoopCallOther();
 }
-:""^inc_indent^"if" "blocktype="^ULeb128 is opc=0x04; ULeb128; $(INC_INDENT) unimpl
-:""^inc_indent^"else" is opc=0x05; inc_indent unimpl
+:""^inc_indent^"if" "blocktype="^ULeb128 is opc=0x04; ULeb128; $(INC_INDENT) {
+	val:4 = 0;
+	pop32(val);
+	if(val != 0) goto inst_next;
+	ifCallOther();
+}
+:""^inc_indent^"else" is opc=0x05; inc_indent {
+	elseCallOther();
+}
 
 :""^indent^"end" is opc=0x0b; indent_lvl=0; indent {
-	return [LR];
+	returnCallOther();
 }
-:""^indent^"end" is opc=0x0b; indent [ indent_lvl = indent_lvl - 1; globalset(inst_next, indent_lvl); ] unimpl
+:""^indent^"end" is opc=0x0b; indent [ indent_lvl = indent_lvl - 1; globalset(inst_next, indent_lvl); ] {
+	endCallOther();
+}
 
 :""^indent^"br" ULeb128 is opc=0x0c; ULeb128; indent {
 	brCallOther();
 }
 :""^indent^"br_if" ULeb128 is opc=0x0d; ULeb128; indent {
-	br_if(ULeb128);
+	val:4 = 0;
+	pop32(val);
+	if(val == 0) goto inst_next;
+	brCallOther();
 }
 #TODO: br_table
 #:""^indent^"br_table" is opc=0x0e; ULeb128; indent [br_table_count=ULeb128;] unimpl
 :""^indent^"return" is opc=0x0f; indent {
-	return [LR];
+	returnCallOther();
 }
 :""^indent^"call" ULeb128 is opc=0x10; ULeb128; indent unimpl
 :""^indent^"call_indirect" typeidx tableidx is opc=0x11; typeidx; tableidx; indent unimpl
@@ -197,8 +212,23 @@ inc_indent: " . "^inc_indent is inc_indent [ indent_lvl = indent_lvl-1; ]{}
 :""^indent^"ref.is_null" is opc=0xd1; indent unimpl
 :""^indent^"ref.func" ULeb128 is opc=0xd2; ULeb128; indent unimpl
 
-:""^indent^"drop" is opc=0x1a; indent unimpl
-:""^indent^"select" is opc=0x1b; indent unimpl
+:""^indent^"drop" is opc=0x1a; indent {
+	val:8 = 0;
+	pop64(val);
+}
+:""^indent^"select" is opc=0x1b; indent {
+	cond:4 = 0;
+	pop32(cond);
+	val1:8 = 0;
+	val2:8 = 0;
+	pop64(val2);
+	pop64(val1);
+	if (cond != 0) goto <true>;
+	push64(val1);
+	goto inst_next;
+<true>
+	push64(val2);
+}
 
 #TODO: select t* 0x1c
 

@@ -33,6 +33,7 @@ public class PcodeOpEmitter {
 	private HashMap<String, Varnode> nameToReg;
 	private ArrayList<PcodeOp> opList;
 	private SleighLanguage language;
+	private AddressSpace ramSpace;
 	private AddressSpace defSpace;
 	private AddressSpace constSpace;
 	private AddressSpace uniqueSpace;
@@ -99,10 +100,15 @@ public class PcodeOpEmitter {
 		return new Varnode(constSpace.getAddress(val), size);
 	}
 	
+	private Varnode getAddress(Address addr) {
+		return new Varnode(addr, 1);
+	}
+	
 	public PcodeOpEmitter(SleighLanguage language, Address opAddr, long uniqBase) {
 		nameToReg = new HashMap<String, Varnode>();
 		opList = new ArrayList<PcodeOp>();
 		this.language = language;
+		ramSpace = language.getAddressFactory().getAddressSpace(RAM);
 		constSpace = language.getAddressFactory().getConstantSpace();
 		defSpace = language.getDefaultSpace();
 		uniqueSpace = language.getAddressFactory().getUniqueSpace();
@@ -133,22 +139,26 @@ public class PcodeOpEmitter {
 		PcodeOp op = new PcodeOp(opAddress, seqnum++, PcodeOp.INT_ADD, in, spVarnode);
 		opList.add(op);
 	}
-
-	/**
-	 * Emits pcode to push a value of computational category 1 onto the stack.
-	 * @param valueName - name of varnode to push.
-	 */
-	public void emitPushCat1Value(String valueName) {
+	
+	public void emitJump(Address a) {
+		Varnode[] in = new Varnode[1];
+		in[0] = getAddress(a);
+		PcodeOp op = new PcodeOp(opAddress, seqnum++, PcodeOp.BRANCH, in);
+		opList.add(op);
+	}
+	
+	public void emitRet() {
+		Varnode[] in = new Varnode[1];
+		in[0] = findRegister("LR");
+		PcodeOp op = new PcodeOp(opAddress, seqnum++, PcodeOp.RETURN, in);
+		opList.add(op);
+	}
+	
+	public void emitPopn(int nqwords) {
 		Varnode[] in = new Varnode[2];
 		in[0] = spVarnode;
-		in[1] = getConstant(4, spVarnode.getSize());
-		PcodeOp op = new PcodeOp(opAddress, seqnum++, PcodeOp.INT_SUB, in, spVarnode);
-		opList.add(op);
-		in = new Varnode[3];
-		in[0] = defSpaceId;
-		in[1] = spVarnode;
-		in[2] = findRegister(valueName);
-		op = new PcodeOp(opAddress, seqnum++, PcodeOp.STORE, in);
+		in[1] = getConstant((long)(nqwords * 8), 4);
+		PcodeOp op = new PcodeOp(opAddress, seqnum++, PcodeOp.INT_ADD, in, spVarnode);
 		opList.add(op);
 	}
 
@@ -156,7 +166,7 @@ public class PcodeOpEmitter {
 	 * Emits pcode to push a value of computational category 2 onto the stack.
 	 * @param valueName - name of varnode to push.
 	 */
-	public void emitPushCat2Value(String valueName) {
+	public void emitPush64(String valueName) {
 		Varnode[] in = new Varnode[2];
 		in[0] = spVarnode;
 		in[1] = getConstant(8, spVarnode.getSize());
@@ -174,7 +184,7 @@ public class PcodeOpEmitter {
 	 * Emits pcode to pop a value of computational category 2 from the stack.
 	 * @param destName - name of destination varnode.
 	 */
-	public void emitPopCat2Value(String destName) {
+	public void emitPop64(String destName) {
 		Varnode out = findVarnode(destName, 8);
 		Varnode[] in = new Varnode[2];
 		in[0] = defSpaceId;
@@ -187,25 +197,6 @@ public class PcodeOpEmitter {
 		op = new PcodeOp(opAddress, seqnum++, PcodeOp.INT_ADD, in, spVarnode);
 		opList.add(op);
 	}
-
-	/**
-	 * Emits pcode to pop a value of computational category 1 from the stack.
-	 * @param destName - name of destination varnode.
-	 */
-	public void emitPopCat1Value(String destName) {
-		Varnode out = findVarnode(destName, 4);
-		Varnode[] in = new Varnode[2];
-		in[0] = defSpaceId;
-		in[1] = spVarnode;
-		PcodeOp op = new PcodeOp(opAddress, seqnum++, PcodeOp.LOAD, in, out);
-		opList.add(op);
-		in = new Varnode[2];
-		in[0] = spVarnode;
-		in[1] = getConstant(4, spVarnode.getSize());
-		op = new PcodeOp(opAddress, seqnum++, PcodeOp.INT_ADD, in, spVarnode);
-		opList.add(op);
-	}
-
 
 	private boolean compareVarnode(Varnode vn1, Varnode vn2, PcodeOpEmitter op2) {
 		if (vn1 == null) {

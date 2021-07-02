@@ -92,14 +92,6 @@ public class WasmLoader extends AbstractLibrarySupportLoader {
 		block.setWrite( false );
 		block.setExecute( true );
 	}
-
-	private void createMethodLookupMemoryBlock(Program program, TaskMonitor monitor) throws Exception {
-		Address address = Utils.toAddr( program, Utils.LOOKUP_ADDRESS );
-		MemoryBlock block = program.getMemory( ).createInitializedBlock( "method_lookup", address, Utils.MAX_METHOD_LENGTH, (byte) 0xff, monitor, false );
-		block.setRead( true );
-		block.setWrite( false );
-		block.setExecute( false );
-	}
 	
 	public Data createData(Program program, Listing listing, Address address, DataType dt) {
 		try {
@@ -173,7 +165,6 @@ public class WasmLoader extends AbstractLibrarySupportLoader {
 			BinaryReader reader = new BinaryReader( provider, true );
 			WasmModule module = new WasmModule( reader );
 	
-			createMethodLookupMemoryBlock( program, monitor );
 			createMethodByteCodeBlock( program, length, monitor);
 			markupHeader(program, module.getHeader(), monitor, inputStream, log);
 			markupSections(program, module, monitor, inputStream, log);
@@ -184,16 +175,13 @@ public class WasmLoader extends AbstractLibrarySupportLoader {
 				if (section.getId() == WasmSectionId.SEC_CODE) {
 					WasmCodeSection codeSection = (WasmCodeSection)section.getPayload();
 					long code_offset = section.getPayloadOffset();
-					int lookupOffset = 0;
 					for (int i = 0; i < codeSection.getFunctions().size(); ++i) {
 						WasmFunctionBody method = codeSection.getFunctions().get(i);
 						long method_offset = code_offset + method.getOffset();
 						Address methodAddress = Utils.toAddr( program, Utils.METHOD_ADDRESS + method_offset );
 						Address methodend = Utils.toAddr( program, Utils.METHOD_ADDRESS + method_offset + method.getInstructions().length);
-						Address methodIndexAddress = Utils.toAddr( program, Utils.LOOKUP_ADDRESS + lookupOffset );
 						byte [] instructionBytes = method.getInstructions();
 						program.getMemory( ).setBytes( methodAddress, instructionBytes );
-						program.getMemory( ).setInt( methodIndexAddress, (int) methodAddress.getOffset( ));
 						//The function index space begins with an index for each imported function, 
 						//in the order the imports appear in the Import Section, if present, 
 						//followed by an index for each function in the Function Section, 
@@ -207,7 +195,6 @@ public class WasmLoader extends AbstractLibrarySupportLoader {
 								methodName, methodAddress, 
 								new AddressSet(methodAddress, methodend), SourceType.ANALYSIS);
 						program.getSymbolTable().createLabel(methodAddress, methodName, SourceType.ANALYSIS);
-						lookupOffset += 4;
 					}
 				}
 			}
