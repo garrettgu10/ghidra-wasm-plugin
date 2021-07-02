@@ -476,14 +476,16 @@
 	x1:4 = 0;
 	pop32(x1);
 	pop32(x0);
-	push32((x0 << x1) | (x0 >> (32 - x1)));
+	res:4 = rotl(x0, x1);
+	push32(res);
 }
 :""^indent^"i32.rotr"  is opc=0x78; indent {
 	x0:4 = 0;
 	x1:4 = 0;
 	pop32(x1);
 	pop32(x0);
-	push32((x0 >> x1) | (x0 << (32 - x1)));
+	res:4 = rotr(x0, x1);
+	push32(res);
 }
 :""^indent^"i64.clz"  is opc=0x79; indent {
 	x0:8 = 0;
@@ -599,14 +601,16 @@
 	x1:8 = 0;
 	pop64(x1);
 	pop64(x0);
-	push64((x0 << x1) | (x0 >> (64 - x1)));
+	res:8 = rotl(x0, x1);
+	push64(res);
 }
 :""^indent^"i64.rotr"  is opc=0x8A; indent {
 	x0:8 = 0;
 	x1:8 = 0;
 	pop64(x1);
 	pop64(x0);
-	push64((x0 >> x1) | (x0 << (64 - x1)));
+	res:8 = rotr(x0, x1);
+	push64(res);
 }
 :""^indent^"f32.abs"  is opc=0x8B; indent {
 	x0:4 = 0;
