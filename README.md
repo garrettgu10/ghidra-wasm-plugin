@@ -6,7 +6,7 @@ Currently able to disassemble and decompile simple modules, still needs some deb
 
 TODO:
 - [ ] Debug intraprocedural control flow
-- [ ] Parse type section
+- [x] Parse type section
 - [ ] Convert type definitions to Ghidra function signatures
 - [ ] Handle function call sites
 - [ ] Table/ref instructions
