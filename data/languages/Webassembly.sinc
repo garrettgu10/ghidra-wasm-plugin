@@ -111,8 +111,6 @@ macro store64(memoffset, val) {
 ################################################################
 
 define pcodeop trap;
-define pcodeop get_global;
-define pcodeop set_global;
 define pcodeop popcnt;
 define pcodeop clz;
 define pcodeop ctz;
@@ -250,13 +248,13 @@ inc_indent: " . "^inc_indent is inc_indent [ indent_lvl = indent_lvl-1; ]{}
 	push64(val);
 }
 :""^indent^"global.get" globalidx is opc=0x23; globalidx; indent {
-	val:8 = get_global(globalidx);
+	val:8 = *[global] (globalidx:4 * 8);
 	push64(val);
 }
 :""^indent^"global.set" globalidx is opc=0x24; globalidx; indent {
 	val:8 = 0;
 	pop64(val);
-	set_global(globalidx, val);
+	*[global] (globalidx:4 * 8) = val;
 }
 
 #TODO: table instructions

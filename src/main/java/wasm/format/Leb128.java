@@ -26,6 +26,7 @@ import com.googlecode.d2j.DexException;
 
 import ghidra.app.util.bin.BinaryReader;
 import ghidra.app.util.bin.StructConverter;
+import ghidra.program.model.data.ArrayDataType;
 import ghidra.program.model.data.DataType;
 import ghidra.util.NumericUtilities;
 import ghidra.util.exception.DuplicateNameException;
@@ -225,6 +226,6 @@ public final class Leb128 implements StructConverter {
 			case 4:
 				return ghidra.app.util.bin.StructConverter.DWORD; 
 		}
-		return ghidra.app.util.bin.StructConverter.STRING;
+		return new ArrayDataType(BYTE, length, BYTE.getLength());
 	}
 }

@@ -105,6 +105,7 @@ public class WasmLoader extends AbstractLibrarySupportLoader {
 		}
 		catch (CodeUnitInsertionException e) {
 			Msg.warn(this, "ELF data markup conflict at " + address);
+			e.printStackTrace();
 		}
 		catch (DataTypeConflictException e) {
 			Msg.error(this, "ELF data type markup conflict:" + e.getMessage());

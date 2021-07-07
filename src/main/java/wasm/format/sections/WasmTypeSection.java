@@ -30,7 +30,7 @@ public class WasmTypeSection implements WasmPayload {
 
 	@Override
 	public void addToStructure(Structure structure) throws IllegalArgumentException, DuplicateNameException, IOException {
-		structure.add(count.toDataType(), count.getValue(), "count", null);
+		structure.add(count.toDataType(), count.toDataType().getLength(), "count", null);
 		for (int i = 0; i < count.getValue(); ++i) {
 			structure.add(types.get(i).toDataType(), types.get(i).toDataType().getLength(), "type_"+i, null);
 		}
