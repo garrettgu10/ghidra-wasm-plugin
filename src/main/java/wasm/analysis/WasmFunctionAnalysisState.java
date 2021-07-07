@@ -101,6 +101,7 @@ public class WasmFunctionAnalysisState {
 					}
 					ReturnMetaInstruction ret = (ReturnMetaInstruction) instr;
 					ret.returnsVal = true;
+					valueStackDepth--;
 				}
 				break;
 			}
