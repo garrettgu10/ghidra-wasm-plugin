@@ -5,7 +5,7 @@ Currently able to disassemble and decompile simple modules, still needs some deb
 ![image](https://user-images.githubusercontent.com/10344380/124648385-cea1cd80-de5c-11eb-81b6-d2e0039e1a0f.png)
 
 TODO:
-- [ ] Debug intraprocedural control flow
+- [x] Debug intraprocedural control flow
 - [x] Parse type section
 - [ ] Convert type definitions to Ghidra function signatures
 - [ ] Handle function call sites
