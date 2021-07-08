@@ -15,9 +15,9 @@ public class WasmFuncType implements StructConverter {
 
 	byte form;
 	Leb128 param_count;
-	byte[] param_types;
+	byte[] param_types = new byte[0];
 	Leb128 return_count;
-	byte[] return_types;
+	byte[] return_types = new byte[0];
 	
 	public WasmFuncType (BinaryReader reader) throws IOException {
 		form = reader.readNextByte();
@@ -29,6 +29,14 @@ public class WasmFuncType implements StructConverter {
 		if (return_count.getValue() > 0) {
 			return_types = reader.readNextByteArray(return_count.getValue());			
 		}
+	}
+	
+	public byte[] getParamTypes() {
+		return param_types;
+	}
+	
+	public byte[] getReturnTypes() {
+		return return_types;
 	}
 
 	@Override

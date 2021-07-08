@@ -48,6 +48,7 @@ import ghidra.util.Msg;
 import ghidra.util.exception.CancelledException;
 import ghidra.util.exception.DuplicateNameException;
 import ghidra.util.task.TaskMonitor;
+import wasm.analysis.WasmAnalysisState;
 import wasm.file.WasmModule;
 import wasm.format.Utils;
 import wasm.format.WasmConstants;
@@ -139,6 +140,15 @@ public class WasmLoader extends AbstractLibrarySupportLoader {
 			createData(program, program.getListing(), start, section.toDataType());			
 		}
 	}
+	
+	private void addModuleSection(Program program, long length, TaskMonitor monitor, InputStream reader, MessageLog log) throws AddressOverflowException {
+		boolean r = true;
+		boolean w = false;
+		boolean x = false;
+		String MODULE_SOURCE_NAME = "Wasm Module";
+		Address start = program.getAddressFactory().getDefaultAddressSpace().getAddress(Utils.MODULE_BASE);
+		MemoryBlockUtils.createInitializedBlock(program, false, ".module", start, reader, length, "The full file contents of the Wasm module", MODULE_SOURCE_NAME, r, w, x, log, monitor);
+	}
 
 	private String getMethodName(WasmExportSection exports, int id) {
 		if(exports != null) {
@@ -165,6 +175,8 @@ public class WasmLoader extends AbstractLibrarySupportLoader {
 			
 			BinaryReader reader = new BinaryReader( provider, true );
 			WasmModule module = new WasmModule( reader );
+			
+			addModuleSection(program, provider.length(), monitor, provider.getInputStream(0), log);
 	
 			createMethodByteCodeBlock( program, length, monitor);
 			markupHeader(program, module.getHeader(), monitor, inputStream, log);

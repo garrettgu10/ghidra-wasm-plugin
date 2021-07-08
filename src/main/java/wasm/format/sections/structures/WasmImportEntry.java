@@ -48,6 +48,21 @@ public class WasmImportEntry implements StructConverter {
 		
 		}
 	}
+	
+	public WasmExternalKind getKind() {
+		return kind;
+	}
+	
+	public int getFunctionType() {
+		if(kind != WasmExternalKind.EXT_FUNCTION) {
+			throw new RuntimeException("Cannot get function type of non-function import");
+		}
+		return function_type.getValue();
+	}
+	
+	public String getName() {
+		return module_str + "__" + field_str;
+	}
 
 	@Override
 	public DataType toDataType() throws DuplicateNameException, IOException {

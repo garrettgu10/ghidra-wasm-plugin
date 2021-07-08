@@ -18,13 +18,13 @@ define pcodeop popCallOther;
 define pcodeop beginLoopCallOther;
 define pcodeop beginBlockCallOther;
 define pcodeop endCallOther;
-define pcodeop returnCallOther;
-
-define pcodeop ifCallOther;
-define pcodeop elseCallOther;
 
 # These pcodeop's do not have NOP semantics, they are dynamically injected into by PcodeInjectLibraryWasm
 define pcodeop brCallOther;
+define pcodeop callCallOther;
+define pcodeop ifCallOther;
+define pcodeop elseCallOther;
+define pcodeop returnCallOther;
 
 macro push32(val32) {
 	pushCallOther(32:4);
@@ -205,7 +205,9 @@ inc_indent: " . "^inc_indent is inc_indent [ indent_lvl = indent_lvl-1; ]{}
 :""^indent^"return" is opc=0x0f; indent {
 	returnCallOther();
 }
-:""^indent^"call" ULeb128 is opc=0x10; ULeb128; indent unimpl
+:""^indent^"call" ULeb128 is opc=0x10; ULeb128; indent {
+	callCallOther();
+}
 :""^indent^"call_indirect" typeidx tableidx is opc=0x11; typeidx; tableidx; indent unimpl
 
 :""^indent^"ref.null" reftype is opc=0xd0; reftype; indent unimpl

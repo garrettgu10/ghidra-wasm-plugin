@@ -29,6 +29,10 @@ public class WasmImportSection implements WasmPayload {
 	public int getCount() {
 		return count.getValue();
 	}
+	
+	public List<WasmImportEntry> getEntries() {
+		return imports;
+	}
 
 	@Override
 	public void addToStructure(Structure structure) throws IllegalArgumentException, DuplicateNameException, IOException {

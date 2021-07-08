@@ -33,6 +33,7 @@ import ghidra.program.model.address.Address;
 import ghidra.program.model.address.AddressSetView;
 import ghidra.program.model.listing.Function;
 import ghidra.program.model.listing.Program;
+import ghidra.program.model.mem.Memory;
 import ghidra.program.model.symbol.Namespace;
 import ghidra.program.model.symbol.SourceType;
 import ghidra.program.model.symbol.Symbol;
@@ -81,6 +82,21 @@ public class WasmAnalyzer extends AbstractAnalyzer {
 	public boolean added(Program program, AddressSetView set, TaskMonitor monitor, MessageLog log)
 			throws CancelledException {
 		WasmAnalysisState state = WasmAnalysisState.getState(program);
+		
+		Memory mem = program.getMemory();
+		Address moduleStart = mem.getBlock(".module").getStart();
+		ByteProvider memByteProvider = new MemoryByteProvider(mem, moduleStart);
+		BinaryReader memBinaryReader = new BinaryReader(memByteProvider, true);
+		WasmModule module = null;
+		try {
+			module = new WasmModule(memBinaryReader);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		state.setModule(module);
+		state.findFunctionSignatures();
 		
 		DecompileOptions options = new DecompileOptions();
     	options.setWARNCommentIncluded(true);

@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import aQute.bnd.service.diff.Type;
 import ghidra.app.util.bin.BinaryReader;
 import ghidra.app.util.bin.StructConverter;
 import ghidra.program.model.data.DataType;
@@ -26,7 +27,10 @@ public class WasmTypeSection implements WasmPayload {
 		}
 		
 	}
-
+	
+	public WasmFuncType getType(int typeidx) {
+		return types.get(typeidx);
+	}
 
 	@Override
 	public void addToStructure(Structure structure) throws IllegalArgumentException, DuplicateNameException, IOException {

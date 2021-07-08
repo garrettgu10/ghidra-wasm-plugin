@@ -24,7 +24,10 @@ public class WasmFunctionSection implements WasmPayload {
 			types.add(new Leb128(reader));
 		}		
 	}
-
+	
+	public int getTypeIdx(int funcidx) {
+		return types.get(funcidx).getValue();
+	}
 
 	@Override
 	public void addToStructure(Structure structure) throws IllegalArgumentException, DuplicateNameException, IOException {
