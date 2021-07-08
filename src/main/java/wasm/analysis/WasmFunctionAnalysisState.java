@@ -3,10 +3,16 @@ package wasm.analysis;
 import java.util.ArrayList;
 
 import ghidra.program.model.address.Address;
+import wasm.format.WasmFuncSignature;
 
 public class WasmFunctionAnalysisState {
 
 	private ArrayList<MetaInstruction> metas = new ArrayList<>();
+	private WasmAnalysisState parent;
+	
+	public WasmFunctionAnalysisState(WasmAnalysisState parent) {
+		this.parent = parent;
+	}
 	
 	public void collectMeta(MetaInstruction meta) {
 		metas.add(meta);
@@ -97,6 +103,9 @@ public class WasmFunctionAnalysisState {
 			case RETURN:
 				if(valueStackDepth != 0) {
 					if(valueStackDepth != 1) {
+						for(MetaInstruction meta: metas) {
+							System.out.println(meta);
+						}
 						throw new RuntimeException("Too many items on stack at return");
 					}
 					ReturnMetaInstruction ret = (ReturnMetaInstruction) instr;
@@ -104,6 +113,13 @@ public class WasmFunctionAnalysisState {
 					valueStackDepth--;
 				}
 				break;
+			case CALL:
+				CallMetaInstruction callInstr = (CallMetaInstruction) instr;
+				int funcidx = callInstr.funcIdx;
+				WasmFuncSignature func = parent.getFuncSignature(funcidx);
+				callInstr.signature = func;
+				valueStackDepth -= func.getParams().length;
+				valueStackDepth += func.getReturns().length;
 			}
 		}
 	}

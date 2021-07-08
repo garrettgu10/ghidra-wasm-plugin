@@ -9,6 +9,22 @@ public class WasmFuncSignature {
 	private String name;
 	private Address addr;
 	
+	public ValType[] getParams() {
+		return params;
+	}
+	
+	public ValType[] getReturns() {
+		return returns;
+	}
+	
+	public String getName() {
+		return name;
+	}
+	
+	public Address getAddr() {
+		return addr;
+	}
+	
 	public WasmFuncSignature (byte[] paramTypes, byte[] returnTypes, String name, Address addr) {
 		this.name = name;
 		this.addr = addr;
@@ -23,5 +39,10 @@ public class WasmFuncSignature {
 		for(int j = 0; j < returnTypes.length; j++) {
 			returns[j] = ValType.fromByte(returnTypes[j]);
 		}
+	}
+	
+	@Override
+	public String toString() {
+		return String.format("%s @ %s %dT -> %dT", name, addr.toString(), params.length, returns.length);
 	}
 }

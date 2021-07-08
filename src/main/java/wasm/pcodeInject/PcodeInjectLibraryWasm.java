@@ -21,6 +21,7 @@ public class PcodeInjectLibraryWasm extends PcodeInjectLibrary{
 	public static final String IF = "ifCallOther";
 	public static final String ELSE = "elseCallOther";
 	public static final String RETURN = "returnCallOther";
+	public static final String CALL = "callCallOther";
 	
 	public static final String SOURCENAME = "wasmsource";
 	
@@ -47,6 +48,7 @@ public class PcodeInjectLibraryWasm extends PcodeInjectLibrary{
 		implementedOps.put(IF, new InjectMeta(SOURCENAME, l, getNextUniqueBase(), MetaInstruction.Type.IF));
 		implementedOps.put(ELSE, new InjectMeta(SOURCENAME, l, getNextUniqueBase(), MetaInstruction.Type.ELSE));
 		implementedOps.put(RETURN, new InjectMeta(SOURCENAME, l, getNextUniqueBase(), MetaInstruction.Type.RETURN));
+		implementedOps.put(CALL, new InjectMeta(SOURCENAME, l, getNextUniqueBase(), MetaInstruction.Type.CALL));
 	}
 	
 	@Override

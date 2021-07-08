@@ -8,6 +8,7 @@ import ghidra.program.model.listing.Program;
 import ghidra.program.model.mem.MemoryAccessException;
 import ghidra.program.model.pcode.Varnode;
 import wasm.format.Leb128;
+import wasm.format.WasmFuncSignature;
 import wasm.pcodeInject.PcodeHelper;
 import wasm.pcodeInject.PcodeOpEmitter;
 
@@ -21,7 +22,8 @@ public abstract class MetaInstruction {
 		ELSE,
 		END,
 		BR,
-		RETURN
+		RETURN,
+		CALL
 	}
 	
 	Address location;
@@ -47,7 +49,7 @@ public abstract class MetaInstruction {
 				res = new PopMetaInstruction(param);
 				break;
 			case BR:
-				long lvl = getBrLvl(p, con.baseAddr);
+				long lvl = getLeb128Operand(p, con.baseAddr);
 				res = new BrMetaInstruction((int)lvl);
 				break;
 			case BEGIN_LOOP:
@@ -68,6 +70,10 @@ public abstract class MetaInstruction {
 			case RETURN:
 				res = new ReturnMetaInstruction();
 				break;
+			case CALL:
+				long idx = getLeb128Operand(p, con.baseAddr);
+				res = new CallMetaInstruction((int) idx);
+				break;
 			}
 			
 			if(res != null) {
@@ -84,7 +90,7 @@ public abstract class MetaInstruction {
 	
 	//We have to do this since we cannot resolve non-constant varnode inputs to our CallOther instruction
 	//But ULeb128 creates a reference varnode
-	public static long getBrLvl(Program p, Address brAddress) throws MemoryAccessException {
+	public static long getLeb128Operand(Program p, Address brAddress) throws MemoryAccessException {
 		byte[] buf = new byte[16];
 		p.getMemory().getBytes(brAddress.add(1), buf); //add 1 to go past the opcode
 		return Leb128.readUnsignedLeb128(buf);
@@ -296,5 +302,30 @@ class BrMetaInstruction extends MetaInstruction {
 	@Override
 	public Type getType() {
 		return Type.BR;
+	}
+}
+
+class CallMetaInstruction extends MetaInstruction {
+	int funcIdx;
+	WasmFuncSignature signature;
+	
+	public CallMetaInstruction(int funcIdx) {
+		this.funcIdx = funcIdx;
+	}
+	
+	@Override
+	public String toString() {
+		return super.toString() + " CALL (index " + funcIdx + ") + (dest " + signature + ")";
+	}
+	
+	@Override
+	public void synthesize(PcodeOpEmitter pcode) {
+		pcode.emitNop();
+		//TODO: synthesize the call
+	}
+
+	@Override
+	public Type getType() {
+		return Type.CALL;
 	}
 }

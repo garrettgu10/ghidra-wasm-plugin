@@ -40,13 +40,17 @@ public class WasmAnalysisState {
 	public WasmFunctionAnalysisState getFuncState(Function f) {
 		if(!funcStates.containsKey(f)) {
 			System.out.println("Creating new function analysis state for "+f.getName());
-			funcStates.put(f, new WasmFunctionAnalysisState());
+			funcStates.put(f, new WasmFunctionAnalysisState(this));
 		}
 		return funcStates.get(f);
 	}
 	
 	public void setModule(WasmModule module) {
 		this.module = module;
+	}
+	
+	public WasmFuncSignature getFuncSignature(int funcIdx) {
+		return functions.get(funcIdx);
 	}
 	
 	public void findFunctionSignatures() {

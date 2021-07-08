@@ -19,7 +19,6 @@ import java.io.IOException;
 
 import ghidra.app.decompiler.DecompInterface;
 import ghidra.app.decompiler.DecompileOptions;
-import ghidra.app.decompiler.DecompileResults;
 import ghidra.app.services.AbstractAnalyzer;
 import ghidra.app.services.AnalysisPriority;
 import ghidra.app.services.AnalyzerType;
@@ -27,27 +26,16 @@ import ghidra.app.util.bin.BinaryReader;
 import ghidra.app.util.bin.ByteProvider;
 import ghidra.app.util.bin.MemoryByteProvider;
 import ghidra.app.util.importer.MessageLog;
-import ghidra.file.formats.android.dex.format.DexHeader;
 import ghidra.framework.options.Options;
 import ghidra.program.model.address.Address;
 import ghidra.program.model.address.AddressSetView;
 import ghidra.program.model.listing.Function;
 import ghidra.program.model.listing.Program;
 import ghidra.program.model.mem.Memory;
-import ghidra.program.model.symbol.Namespace;
-import ghidra.program.model.symbol.SourceType;
-import ghidra.program.model.symbol.Symbol;
 import ghidra.util.exception.CancelledException;
-import ghidra.util.exception.InvalidInputException;
 import ghidra.util.task.TaskMonitor;
 import wasm.analysis.WasmAnalysisState;
 import wasm.file.WasmModule;
-import wasm.format.Utils;
-import wasm.format.WasmHeader;
-import wasm.format.sections.WasmCodeSection;
-import wasm.format.sections.WasmSection;
-import wasm.format.sections.WasmSection.WasmSectionId;
-import wasm.format.sections.structures.WasmFunctionBody;
 
 /**
  * TODO: Provide class-level documentation that describes what this analyzer does.

@@ -225,11 +225,14 @@ inc_indent: " . "^inc_indent is inc_indent [ indent_lvl = indent_lvl-1; ]{}
 	val2:8 = 0;
 	pop64(val2);
 	pop64(val1);
+	res:8 = 0;
 	if (cond != 0) goto <true>;
-	push64(val1);
-	goto inst_next;
+	res = val1;
+	goto <finish>;
 <true>
-	push64(val2);
+	res = val2;
+<finish>
+	push64(res);
 }
 
 #TODO: select t* 0x1c
