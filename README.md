@@ -7,7 +7,7 @@ Currently able to disassemble and decompile simple modules, still needs some deb
 TODO:
 - [x] Debug intraprocedural control flow
 - [x] Parse type section
-- [ ] Convert type definitions to Ghidra function signatures
-- [ ] Handle function call sites
+- [x] Convert type definitions to Ghidra function signatures (skipped, might be better to just let the decompiler infer)
+- [x] Handle function call sites
 - [ ] Table/ref instructions
 - [ ] `br_table` disassembly
