@@ -28,6 +28,10 @@ public class WasmFunctionSection implements WasmPayload {
 	public int getTypeIdx(int funcidx) {
 		return types.get(funcidx).getValue();
 	}
+	
+	public int getTypeCount() {
+		return types.size();
+	}
 
 	@Override
 	public void addToStructure(Structure structure) throws IllegalArgumentException, DuplicateNameException, IOException {

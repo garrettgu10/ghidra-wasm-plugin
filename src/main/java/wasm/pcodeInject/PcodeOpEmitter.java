@@ -224,6 +224,20 @@ public class PcodeOpEmitter {
 		opList.add(op);
 	}
 	
+	public void emitMov64(String from, String to) {
+		Varnode[] src = new Varnode[] { findVarnode(from, 8) };
+		Varnode dest = findVarnode(to, 8);
+		PcodeOp mov = new PcodeOp(opAddress, seqnum++, PcodeOp.COPY, src, dest);
+		opList.add(mov);
+	}
+	
+	public void emitMov32(String from, String to) {
+		Varnode[] src = new Varnode[] { findVarnode(from, 4) };
+		Varnode dest = findVarnode(to, 4);
+		PcodeOp mov = new PcodeOp(opAddress, seqnum++, PcodeOp.COPY, src, dest);
+		opList.add(mov);
+	}
+	
 	public void emitCall(WasmFuncSignature target) {
 		int numParams = target.getParams().length;
 		int numReturns = target.getReturns().length;
@@ -237,11 +251,10 @@ public class PcodeOpEmitter {
 		
 		//move existing locals into temp registers
 		for(int i = 0; i < numParams; i++) {
-			Varnode[] src = new Varnode[] { findVarnode("l" + i, 8) };
-			Varnode dest = findVarnode("tmp" + i, 8);
-			PcodeOp mov = new PcodeOp(opAddress, seqnum++, PcodeOp.COPY, src, dest);
-			opList.add(mov);
+			emitMov64("l" + i, "tmp" + i);
 		}
+		
+		emitMov32("SP", "tmpSP");
 		
 		//pop parameters from the stack into local registers
 		for(int i = 0; i < numParams; i++) {
@@ -249,20 +262,23 @@ public class PcodeOpEmitter {
 			emitPop64(dest);
 		}
 		
-		//push temp registers onto the stack
-		for(int i = 0; i < numParams; i++) {
-			String src = "tmp" + i;
-			emitPush64(src);
-		}
+//		//push temp registers onto the stack
+//		for(int i = 0; i < numParams; i++) {
+//			String src = "tmp" + i;
+//			emitPush64(src);
+//		}
 		
 		//do the call
 		emitCall(target.getAddr());
 		
-		//pop previous locals from the stack
+		//restore previous local values
 		for(int i = 0; i < numParams; i++) {
-			String dest = "l" + (numParams - 1 - i);
-			emitPop64(dest);
+//			String dest = "l" + (numParams - 1 - i);
+//			emitPop64(dest);
+			emitMov64("tmp" + i, "l" + i);
 		}
+		
+		emitMov32("tmpSP", "SP");
 		
 		//if there is a return value, push it onto the stack
 		if(numReturns == 1) {

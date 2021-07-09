@@ -230,11 +230,11 @@ public class WasmLoader extends AbstractLibrarySupportLoader {
 						
 						String methodName = "import__" + entry.getName();
 						Address methodAddress = Utils.toAddr(program, Utils.IMPORTS_BASE + nextFuncIdx * Utils.IMPORT_STUB_LEN);
-						Address methodEnd = Utils.toAddr(program,  Utils.IMPORTS_BASE + (nextFuncIdx+1) * Utils.IMPORT_STUB_LEN);
+						Address methodEnd = Utils.toAddr(program,  Utils.IMPORTS_BASE + (nextFuncIdx+1) * Utils.IMPORT_STUB_LEN - 1);
 						
-//						program.getFunctionManager().createFunction(
-//								methodName, methodAddress, 
-//								new AddressSet(methodAddress, methodEnd), SourceType.IMPORTED);
+						program.getFunctionManager().createFunction(
+								methodName, methodAddress, 
+								new AddressSet(methodAddress, methodEnd), SourceType.IMPORTED);
 						
 						program.getSymbolTable().createLabel(methodAddress, methodName, SourceType.IMPORTED);
 						

@@ -77,7 +77,9 @@ public class WasmAnalysis {
 		if(funcSec != null) {
 			FunctionIterator funcIter = program.getFunctionManager().getFunctions(true);
 			int i = 0;
+			//non-imported functions will show up first and in order since we are iterating by entry point
 			for(Function func : funcIter) {
+				if(i >= funcSec.getTypeCount()) break;
 				int typeidx = funcSec.getTypeIdx(i);
 				WasmFuncType funcType = typeSec.getType(typeidx);
 				
