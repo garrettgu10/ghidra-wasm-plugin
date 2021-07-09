@@ -21,11 +21,14 @@ import java.util.HashMap;
 import java.util.Map.Entry;
 
 import ghidra.app.plugin.processors.sleigh.SleighLanguage;
+import ghidra.app.plugin.processors.sleigh.symbol.Symbol;
+import ghidra.app.plugin.processors.sleigh.symbol.UseropSymbol;
 import ghidra.program.model.address.Address;
 import ghidra.program.model.address.AddressSpace;
 import ghidra.program.model.lang.Register;
 import ghidra.program.model.pcode.PcodeOp;
 import ghidra.program.model.pcode.Varnode;
+import wasm.format.WasmFuncSignature;
 
 public class PcodeOpEmitter {
 	static final String RAM = "ram";
@@ -147,6 +150,29 @@ public class PcodeOpEmitter {
 		opList.add(op);
 	}
 	
+	public void emitCall(Address a) {
+		Varnode[] in = new Varnode[1];
+		in[0] = getAddress(a);
+		PcodeOp op = new PcodeOp(opAddress, seqnum++, PcodeOp.CALL, in);
+		opList.add(op);
+	}
+	
+	/**
+	 * Emits pcode to call a void black-box pcodeop
+	 * @param pcodeop - name of pcodeop
+	 * @param args - zero or more arguments for the pcodeop
+	 */
+	public void emitVoidPcodeOpCall(String pcodeop, Varnode[] args) {
+		Symbol useropSym = language.getSymbolTable().findGlobalSymbol(pcodeop);
+		Varnode[] in = new Varnode[args.length + 1];
+		in[0] = getConstant(((UseropSymbol) useropSym).getIndex(), 4);
+		for (int i = 0; i < args.length; ++i) {
+			in[i + 1] = args[i];
+		}
+		PcodeOp op = new PcodeOp(opAddress, seqnum++, PcodeOp.CALLOTHER, in);
+		opList.add(op);
+	}
+	
 	public void emitRet() {
 		Varnode[] in = new Varnode[1];
 		in[0] = findRegister("LR");
@@ -196,6 +222,52 @@ public class PcodeOpEmitter {
 		in[1] = getConstant(8, spVarnode.getSize());
 		op = new PcodeOp(opAddress, seqnum++, PcodeOp.INT_ADD, in, spVarnode);
 		opList.add(op);
+	}
+	
+	public void emitCall(WasmFuncSignature target) {
+		int numParams = target.getParams().length;
+		int numReturns = target.getReturns().length;
+		if(numReturns > 1) {
+			throw new RuntimeException("Multiple returns not supported (yet)");
+		}
+		
+		if(target.getAddr() == null) {
+			throw new RuntimeException("Call target unresolved");
+		}
+		
+		//move existing locals into temp registers
+		for(int i = 0; i < numParams; i++) {
+			Varnode[] src = new Varnode[] { findVarnode("l" + i, 8) };
+			Varnode dest = findVarnode("tmp" + i, 8);
+			PcodeOp mov = new PcodeOp(opAddress, seqnum++, PcodeOp.COPY, src, dest);
+			opList.add(mov);
+		}
+		
+		//pop parameters from the stack into local registers
+		for(int i = 0; i < numParams; i++) {
+			String dest = "l" + (numParams - 1 - i); // values are popped off in reverse order
+			emitPop64(dest);
+		}
+		
+		//push temp registers onto the stack
+		for(int i = 0; i < numParams; i++) {
+			String src = "tmp" + i;
+			emitPush64(src);
+		}
+		
+		//do the call
+		emitCall(target.getAddr());
+		
+		//pop previous locals from the stack
+		for(int i = 0; i < numParams; i++) {
+			String dest = "l" + (numParams - 1 - i);
+			emitPop64(dest);
+		}
+		
+		//if there is a return value, push it onto the stack
+		if(numReturns == 1) {
+			emitPush64("ret0");
+		}
 	}
 
 	private boolean compareVarnode(Varnode vn1, Varnode vn2, PcodeOpEmitter op2) {

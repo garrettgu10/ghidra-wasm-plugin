@@ -30,6 +30,19 @@ public abstract class MetaInstruction {
 	
 	protected MetaInstruction() {}
 	
+	public static boolean hasNopSemantics(Type t) {
+		switch(t) {
+		case IF:
+		case ELSE:
+		case BR:
+		case RETURN:
+		case CALL:
+			return false;
+		default:
+			return true;
+		}
+	}
+	
 	public static MetaInstruction create(Type ty, InjectContext con, Program p) {
 		try {
 			ArrayList<Varnode> inputs = con.inputlist;
@@ -320,8 +333,7 @@ class CallMetaInstruction extends MetaInstruction {
 	
 	@Override
 	public void synthesize(PcodeOpEmitter pcode) {
-		pcode.emitNop();
-		//TODO: synthesize the call
+		pcode.emitCall(signature);
 	}
 
 	@Override

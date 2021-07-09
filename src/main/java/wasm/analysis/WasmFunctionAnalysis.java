@@ -5,12 +5,12 @@ import java.util.ArrayList;
 import ghidra.program.model.address.Address;
 import wasm.format.WasmFuncSignature;
 
-public class WasmFunctionAnalysisState {
+public class WasmFunctionAnalysis {
 
 	private ArrayList<MetaInstruction> metas = new ArrayList<>();
-	private WasmAnalysisState parent;
+	private WasmAnalysis parent;
 	
-	public WasmFunctionAnalysisState(WasmAnalysisState parent) {
+	public WasmFunctionAnalysis(WasmAnalysis parent) {
 		this.parent = parent;
 	}
 	
@@ -32,6 +32,7 @@ public class WasmFunctionAnalysisState {
 		return null;
 	}
 
+	//Resolve branch targets, implicit pops, call instructions to make them ready for pcode synthesis
 	public void performResolution() {
 		ArrayList<MetaInstruction> controlStack = new ArrayList<>();
 		int valueStackDepth = 0; //number of items on the value stack

@@ -34,7 +34,7 @@ import ghidra.program.model.listing.Program;
 import ghidra.program.model.mem.Memory;
 import ghidra.util.exception.CancelledException;
 import ghidra.util.task.TaskMonitor;
-import wasm.analysis.WasmAnalysisState;
+import wasm.analysis.WasmAnalysis;
 import wasm.file.WasmModule;
 
 /**
@@ -69,7 +69,7 @@ public class WasmAnalyzer extends AbstractAnalyzer {
 	@Override
 	public boolean added(Program program, AddressSetView set, TaskMonitor monitor, MessageLog log)
 			throws CancelledException {
-		WasmAnalysisState state = WasmAnalysisState.getState(program);
+		WasmAnalysis state = WasmAnalysis.getState(program);
 		
 		Memory mem = program.getMemory();
 		Address moduleStart = mem.getBlock(".module").getStart();

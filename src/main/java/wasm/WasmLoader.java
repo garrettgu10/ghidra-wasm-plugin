@@ -48,11 +48,12 @@ import ghidra.util.Msg;
 import ghidra.util.exception.CancelledException;
 import ghidra.util.exception.DuplicateNameException;
 import ghidra.util.task.TaskMonitor;
-import wasm.analysis.WasmAnalysisState;
+import wasm.analysis.WasmAnalysis;
 import wasm.file.WasmModule;
 import wasm.format.Utils;
 import wasm.format.WasmConstants;
 import wasm.format.WasmHeader;
+import wasm.format.WasmEnums.WasmExternalKind;
 import wasm.format.sections.WasmCodeSection;
 import wasm.format.sections.WasmExportSection;
 import wasm.format.sections.WasmImportSection;
@@ -60,6 +61,7 @@ import wasm.format.sections.WasmSection;
 import wasm.format.sections.WasmSection.WasmSectionId;
 import wasm.format.sections.structures.WasmExportEntry;
 import wasm.format.sections.structures.WasmFunctionBody;
+import wasm.format.sections.structures.WasmImportEntry;
 import wasm.format.sections.structures.WasmLocalEntry.WasmLocalType;
 import wasm.format.sections.WasmSection.WasmSectionId;;
 /**
@@ -93,6 +95,14 @@ public class WasmLoader extends AbstractLibrarySupportLoader {
 		block.setRead( true );
 		block.setWrite( false );
 		block.setExecute( true );
+	}
+	
+	private void createImportStubBlock(Program program, long length, TaskMonitor monitor) throws Exception {
+		Address address = Utils.toAddr(program, Utils.IMPORTS_BASE);
+		MemoryBlock block = program.getMemory().createInitializedBlock( "import_stubs", address, length, (byte) 0xff, monitor, false );
+		block.setRead(true);
+		block.setWrite(false);
+		block.setExecute(true);
 	}
 	
 	public Data createData(Program program, Listing listing, Address address, DataType dt) {
@@ -208,6 +218,27 @@ public class WasmLoader extends AbstractLibrarySupportLoader {
 								methodName, methodAddress, 
 								new AddressSet(methodAddress, methodend), SourceType.ANALYSIS);
 						program.getSymbolTable().createLabel(methodAddress, methodName, SourceType.ANALYSIS);
+					}
+				}else if(section.getId() == WasmSectionId.SEC_IMPORT) {
+					WasmImportSection importSection = (WasmImportSection)section.getPayload();
+					createImportStubBlock(program, importSection.getCount() * Utils.IMPORT_STUB_LEN, monitor);
+					int nextFuncIdx = 0;
+					for(WasmImportEntry entry : importSection.getEntries()) {
+						if(entry.getKind() != WasmExternalKind.EXT_FUNCTION) {
+							continue;
+						}
+						
+						String methodName = "import__" + entry.getName();
+						Address methodAddress = Utils.toAddr(program, Utils.IMPORTS_BASE + nextFuncIdx * Utils.IMPORT_STUB_LEN);
+						Address methodEnd = Utils.toAddr(program,  Utils.IMPORTS_BASE + (nextFuncIdx+1) * Utils.IMPORT_STUB_LEN);
+						
+//						program.getFunctionManager().createFunction(
+//								methodName, methodAddress, 
+//								new AddressSet(methodAddress, methodEnd), SourceType.IMPORTED);
+						
+						program.getSymbolTable().createLabel(methodAddress, methodName, SourceType.IMPORTED);
+						
+						nextFuncIdx++;
 					}
 				}
 			}
