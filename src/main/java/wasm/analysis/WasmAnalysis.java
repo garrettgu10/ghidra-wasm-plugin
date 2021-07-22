@@ -1,13 +1,18 @@
 package wasm.analysis;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
+import ghidra.app.util.bin.BinaryReader;
+import ghidra.app.util.bin.ByteProvider;
+import ghidra.app.util.bin.MemoryByteProvider;
 import ghidra.program.model.address.Address;
 import ghidra.program.model.listing.Function;
 import ghidra.program.model.listing.FunctionIterator;
 import ghidra.program.model.listing.Program;
+import ghidra.program.model.mem.Memory;
 import wasm.file.WasmModule;
 import wasm.format.Utils;
 import wasm.format.WasmFuncSignature;
@@ -37,6 +42,22 @@ public class WasmAnalysis {
 	
 	public WasmAnalysis(Program p) {
 		this.program = p;
+		
+		Memory mem = program.getMemory();
+		Address moduleStart = mem.getBlock(".module").getStart();
+		ByteProvider memByteProvider = new MemoryByteProvider(mem, moduleStart);
+		BinaryReader memBinaryReader = new BinaryReader(memByteProvider, true);
+		WasmModule module = null;
+		try {
+			module = new WasmModule(memBinaryReader);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
+		this.module = module;
+		
+		this.findFunctionSignatures();
 	}
 	
 	public WasmFunctionAnalysis getFuncState(Function f) {
@@ -53,6 +74,10 @@ public class WasmAnalysis {
 	
 	public WasmFuncSignature getFuncSignature(int funcIdx) {
 		return functions.get(funcIdx);
+	}
+	
+	public WasmTypeSection getTypeSection() {
+		return (WasmTypeSection) module.getSection(WasmSectionId.SEC_TYPE).getPayload();
 	}
 	
 	public void findFunctionSignatures() {

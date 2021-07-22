@@ -27,6 +27,7 @@ public class InjectMeta extends InjectPayloadWasm{
 		}else {
 			WasmFunctionAnalysis funcState = analState.getFuncState(
 					program.getFunctionManager().getFunctionContaining(con.baseAddr));
+			System.out.println(con.baseAddr + " " + this.opKind);
 			funcState.findMetaInstruction(con.baseAddr, this.opKind).synthesize(pCode);
 		}
 		

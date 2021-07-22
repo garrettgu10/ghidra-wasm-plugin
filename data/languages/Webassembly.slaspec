@@ -9,6 +9,7 @@ define alignment=1;
 define space ram     type=ram_space      size=4  default;
 
 define space mem0    type=ram_space      size=4;
+define space table0  type=ram_space		 size=4;
 define space global  type=ram_space		 size=4;
 define space register type=register_space size=2;
 

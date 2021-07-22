@@ -71,21 +71,6 @@ public class WasmAnalyzer extends AbstractAnalyzer {
 			throws CancelledException {
 		WasmAnalysis state = WasmAnalysis.getState(program);
 		
-		Memory mem = program.getMemory();
-		Address moduleStart = mem.getBlock(".module").getStart();
-		ByteProvider memByteProvider = new MemoryByteProvider(mem, moduleStart);
-		BinaryReader memBinaryReader = new BinaryReader(memByteProvider, true);
-		WasmModule module = null;
-		try {
-			module = new WasmModule(memBinaryReader);
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		
-		state.setModule(module);
-		state.findFunctionSignatures();
-		
 		DecompileOptions options = new DecompileOptions();
     	options.setWARNCommentIncluded(true);
     	DecompInterface ifc = new DecompInterface();
@@ -103,9 +88,9 @@ public class WasmAnalyzer extends AbstractAnalyzer {
 	    	ifc.decompileFunction(f, 30, null);
 			
 			state.stopCollectingMetas();
-			
-			state.performResolution();
 		}
+		
+		state.performResolution();
 
 		return false;
 	}

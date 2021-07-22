@@ -9,6 +9,7 @@ import ghidra.program.model.mem.MemoryAccessException;
 import ghidra.program.model.pcode.Varnode;
 import wasm.format.Leb128;
 import wasm.format.WasmFuncSignature;
+import wasm.format.sections.structures.WasmFuncType;
 import wasm.pcodeInject.PcodeHelper;
 import wasm.pcodeInject.PcodeOpEmitter;
 
@@ -23,7 +24,8 @@ public abstract class MetaInstruction {
 		END,
 		BR,
 		RETURN,
-		CALL
+		CALL,
+		CALL_INDIRECT
 	}
 	
 	Address location;
@@ -37,6 +39,7 @@ public abstract class MetaInstruction {
 		case BR:
 		case RETURN:
 		case CALL:
+		case CALL_INDIRECT:
 			return false;
 		default:
 			return true;
@@ -87,6 +90,10 @@ public abstract class MetaInstruction {
 				long idx = getLeb128Operand(p, con.baseAddr);
 				res = new CallMetaInstruction((int) idx);
 				break;
+			case CALL_INDIRECT:
+				long typeIdx = getLeb128Operand(p, con.baseAddr);
+				res = new CallIndirectMetaInstruction((int)typeIdx);
+				break;
 			}
 			
 			if(res != null) {
@@ -102,7 +109,7 @@ public abstract class MetaInstruction {
 	}
 	
 	//We have to do this since we cannot resolve non-constant varnode inputs to our CallOther instruction
-	//But ULeb128 creates a reference varnode
+	//But ULeb128 creates a reference varnode in sleigh
 	public static long getLeb128Operand(Program p, Address brAddress) throws MemoryAccessException {
 		byte[] buf = new byte[16];
 		p.getMemory().getBytes(brAddress.add(1), buf); //add 1 to go past the opcode
@@ -161,7 +168,11 @@ class PopMetaInstruction extends MetaInstruction{
 	}
 }
 
-class BeginLoopMetaInstruction extends MetaInstruction {
+abstract class BranchDest extends MetaInstruction {
+	public abstract Address getBranchDest();
+}
+
+class BeginLoopMetaInstruction extends BranchDest {
 	Address endLocation = null; //location of the corresponding end instruction
 	int stackDepthAtStart = 0;
 	
@@ -179,9 +190,14 @@ class BeginLoopMetaInstruction extends MetaInstruction {
 	public Type getType() {
 		return Type.BEGIN_LOOP;
 	}
+
+	@Override
+	public Address getBranchDest() {
+		return location;
+	}
 }
 
-class BeginBlockMetaInstruction extends MetaInstruction {
+class BeginBlockMetaInstruction extends BranchDest {
 	Address endLocation = null;
 	
 	@Override
@@ -198,9 +214,14 @@ class BeginBlockMetaInstruction extends MetaInstruction {
 	public Type getType() {
 		return Type.BEGIN_BLOCK;
 	}
+
+	@Override
+	public Address getBranchDest() {
+		return endLocation;
+	}
 }
 
-class IfMetaInstruction extends MetaInstruction {
+class IfMetaInstruction extends BranchDest {
 	ElseMetaInstruction elseInstr = null;
 	Address endLocation = null;	
 	
@@ -232,6 +253,11 @@ class IfMetaInstruction extends MetaInstruction {
 	@Override
 	public Type getType() {
 		return Type.IF;
+	}
+
+	@Override
+	public Address getBranchDest() {
+		return endLocation;
 	}
 }
 
@@ -291,7 +317,7 @@ class ReturnMetaInstruction extends MetaInstruction {
 
 class BrMetaInstruction extends MetaInstruction {
 	int implicitPops = 0;
-	Address target = null;
+	BranchDest target = null;
 	int level;
 	
 	public BrMetaInstruction(int lvl) {
@@ -309,7 +335,7 @@ class BrMetaInstruction extends MetaInstruction {
 			pcode.emitPopn(implicitPops);			
 		}
 		
-		pcode.emitJump(target);
+		pcode.emitJump(target.getBranchDest());
 	}
 
 	@Override
@@ -339,5 +365,24 @@ class CallMetaInstruction extends MetaInstruction {
 	@Override
 	public Type getType() {
 		return Type.CALL;
+	}
+}
+
+class CallIndirectMetaInstruction extends MetaInstruction {
+	int typeIdx;
+	WasmFuncType signature;	
+	
+	public CallIndirectMetaInstruction(int typeIdx) {
+		this.typeIdx = typeIdx;;
+	}
+
+	@Override
+	public String toString() {
+		return super.toString() + " CALL_INDIRECT (dest " + signature + ")";
+	}
+
+	@Override
+	public Type getType() {
+		return Type.CALL_INDIRECT;
 	}
 }

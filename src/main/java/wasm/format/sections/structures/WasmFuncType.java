@@ -38,6 +38,11 @@ public class WasmFuncType implements StructConverter {
 	public byte[] getReturnTypes() {
 		return return_types;
 	}
+	
+	@Override
+	public String toString() {
+		return param_types.length + "T -> " + return_types.length + "T";
+	}
 
 	@Override
 	public DataType toDataType() throws DuplicateNameException, IOException {

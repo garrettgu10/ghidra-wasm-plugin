@@ -4,6 +4,7 @@ import java.util.ArrayList;
 
 import ghidra.program.model.address.Address;
 import wasm.format.WasmFuncSignature;
+import wasm.format.sections.structures.WasmFuncType;
 
 public class WasmFunctionAnalysis {
 
@@ -60,12 +61,12 @@ public class WasmFunctionAnalysis {
 				case BEGIN_BLOCK:
 				case IF:
 					//jump to the end of the corresponding block
-					br.target = target.getEndAddress();
+					br.target = (BranchDest)target;
 					br.implicitPops = 0;
 					break;
 				case BEGIN_LOOP:
 					//jump back to the beginning of the loop and pop everything that's been pushed since the start
-					br.target = target.location;
+					br.target = (BranchDest)target;
 					BeginLoopMetaInstruction loop = (BeginLoopMetaInstruction)target;
 					br.implicitPops = valueStackDepth - loop.stackDepthAtStart;
 					break;
@@ -121,6 +122,15 @@ public class WasmFunctionAnalysis {
 				callInstr.signature = func;
 				valueStackDepth -= func.getParams().length;
 				valueStackDepth += func.getReturns().length;
+				break;
+			case CALL_INDIRECT:
+				CallIndirectMetaInstruction callIndirect = (CallIndirectMetaInstruction) instr;
+				int typeIdx = callIndirect.typeIdx;
+				WasmFuncType type = parent.getTypeSection().getType(typeIdx);
+				callIndirect.signature = type;
+				valueStackDepth--;
+				valueStackDepth -= type.getParamTypes().length;
+				valueStackDepth += type.getReturnTypes().length;
 			}
 		}
 	}

@@ -263,4 +263,8 @@
   	<pcode dynamic="true">
   	</pcode>
   </callotherfixup>
+  <callotherfixup targetop="callIndirectCallOther">
+  	<pcode dynamic="true">
+  	</pcode>
+  </callotherfixup>
 </compiler_spec>

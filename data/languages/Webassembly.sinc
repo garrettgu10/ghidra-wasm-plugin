@@ -25,6 +25,7 @@ define pcodeop callCallOther;
 define pcodeop ifCallOther;
 define pcodeop elseCallOther;
 define pcodeop returnCallOther;
+define pcodeop callIndirectCallOther;
 
 macro push32(val32) {
 	pushCallOther(32:4);
@@ -118,6 +119,8 @@ define pcodeop br_if;
 define pcodeop rotl;
 define pcodeop rotr;
 
+define pcodeop funcref;
+
 @include "Leb128.sinc"
 
 localidx: ULeb128 is ULeb128 {
@@ -208,11 +211,24 @@ inc_indent: " . "^inc_indent is inc_indent [ indent_lvl = indent_lvl-1; ]{}
 :""^indent^"call" ULeb128 is opc=0x10; ULeb128; indent {
 	callCallOther();
 }
-:""^indent^"call_indirect" typeidx tableidx is opc=0x11; typeidx; tableidx; indent unimpl
+:""^indent^"call_indirect" typeidx tableidx is opc=0x11; typeidx; tableidx; indent {
+	callIndirectCallOther();
+}
 
-:""^indent^"ref.null" reftype is opc=0xd0; reftype; indent unimpl
-:""^indent^"ref.is_null" is opc=0xd1; indent unimpl
-:""^indent^"ref.func" ULeb128 is opc=0xd2; ULeb128; indent unimpl
+:""^indent^"ref.null" reftype is opc=0xd0; reftype; indent {
+	val:8 = 0;
+	push64(val);
+}
+:""^indent^"ref.is_null" is opc=0xd1; indent {
+	val:8 = 0;
+	pop64(val);
+	res:4 = zext(val == 0);
+	push32(res);
+}
+:""^indent^"ref.func" ULeb128 is opc=0xd2; ULeb128; indent {
+	val:8 = funcref(ULeb128);
+	push64(val);
+}
 
 :""^indent^"drop" is opc=0x1a; indent {
 	val:8 = 0;
@@ -262,7 +278,17 @@ inc_indent: " . "^inc_indent is inc_indent [ indent_lvl = indent_lvl-1; ]{}
 	*[global] (globalidx:4 * 8) = val;
 }
 
-#TODO: table instructions
+:""^indent^"table.get" ULeb128 is opc=0x25; ULeb128; indent {
+	val:8 = *[table0] (ULeb128:4 * 8);
+	push64(val);
+}
+
+:""^indent^"table.set" ULeb128 is opc=0x26; ULeb128; indent {
+	val:8 = 0;
+	pop64(val);
+	*[table0] (ULeb128:4 * 8) = val;
+}
+
 :""^indent^"i32.const" ULeb128 is opc=0x41; ULeb128; indent {
 	val:4 = ULeb128:4;
 	push32(val);
