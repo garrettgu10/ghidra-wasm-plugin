@@ -380,6 +380,11 @@ class CallIndirectMetaInstruction extends MetaInstruction {
 	public String toString() {
 		return super.toString() + " CALL_INDIRECT (dest " + signature + ")";
 	}
+	
+	@Override
+	public void synthesize(PcodeOpEmitter pcode) {
+		pcode.emitCallIndirect(signature);
+	}
 
 	@Override
 	public Type getType() {

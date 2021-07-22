@@ -2,7 +2,11 @@ package wasm.analysis;
 
 import java.util.ArrayList;
 
+import ghidra.app.decompiler.DecompInterface;
+import ghidra.app.decompiler.DecompileOptions;
 import ghidra.program.model.address.Address;
+import ghidra.program.model.listing.Function;
+import ghidra.program.model.listing.Program;
 import wasm.format.WasmFuncSignature;
 import wasm.format.sections.structures.WasmFuncType;
 
@@ -10,9 +14,32 @@ public class WasmFunctionAnalysis {
 
 	private ArrayList<MetaInstruction> metas = new ArrayList<>();
 	private WasmAnalysis parent;
+	private Function function;
 	
-	public WasmFunctionAnalysis(WasmAnalysis parent) {
+	public WasmFunctionAnalysis(WasmAnalysis parent, Function f) {
 		this.parent = parent;
+		this.function = f;
+		Program program = parent.getProgram();
+		
+		DecompileOptions options = new DecompileOptions();
+    	options.setWARNCommentIncluded(true);
+    	DecompInterface ifc = new DecompInterface();
+    	ifc.setOptions(options);
+    	
+    	if (!ifc.openProgram(program)) {
+			throw new RuntimeException("Unable to decompile: "+ifc.getLastMessage());
+		}
+    	
+    	ifc.setSimplificationStyle("firstpass");
+		
+		parent.startCollectingMetas(this);
+    	
+    	ifc.decompileFunction(f, 30, null);
+		
+    	parent.stopCollectingMetas();
+		
+		this.performResolution();
+
 	}
 	
 	public void collectMeta(MetaInstruction meta) {

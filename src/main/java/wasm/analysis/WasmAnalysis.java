@@ -19,6 +19,7 @@ import wasm.format.WasmFuncSignature;
 import wasm.format.WasmEnums.WasmExternalKind;
 import wasm.format.sections.WasmFunctionSection;
 import wasm.format.sections.WasmImportSection;
+import wasm.format.sections.WasmSection;
 import wasm.format.sections.WasmSection.WasmSectionId;
 import wasm.format.sections.WasmTypeSection;
 import wasm.format.sections.structures.WasmFuncType;
@@ -60,10 +61,14 @@ public class WasmAnalysis {
 		this.findFunctionSignatures();
 	}
 	
+	public Program getProgram() {
+		return program;
+	}
+	
 	public WasmFunctionAnalysis getFuncState(Function f) {
 		if(!funcStates.containsKey(f)) {
 			System.out.println("Creating new function analysis state for "+f.getName());
-			funcStates.put(f, new WasmFunctionAnalysis(this));
+			funcStates.put(f, new WasmFunctionAnalysis(this, f));
 		}
 		return funcStates.get(f);
 	}
@@ -82,7 +87,8 @@ public class WasmAnalysis {
 	
 	public void findFunctionSignatures() {
 		functions = new ArrayList<>();
-		WasmImportSection importSec = (WasmImportSection) module.getSection(WasmSectionId.SEC_IMPORT).getPayload();
+		WasmSection importSection = module.getSection(WasmSectionId.SEC_IMPORT);
+		WasmImportSection importSec = (WasmImportSection) (importSection == null? null : importSection.getPayload());
 		WasmTypeSection typeSec = (WasmTypeSection) module.getSection(WasmSectionId.SEC_TYPE).getPayload(); 
 		if(importSec != null) {
 			List<WasmImportEntry> imports = importSec.getEntries();
@@ -118,8 +124,8 @@ public class WasmAnalysis {
 		return currMetaFunc != null;
 	}
 	
-	public void startCollectingMetas(Function f) {
-		this.currMetaFunc = getFuncState(f);
+	public void startCollectingMetas(WasmFunctionAnalysis f) {
+		this.currMetaFunc = f;
 	}
 	
 	public void stopCollectingMetas() {

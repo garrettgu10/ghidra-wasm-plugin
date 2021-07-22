@@ -29,14 +29,17 @@ import ghidra.program.model.lang.Register;
 import ghidra.program.model.pcode.PcodeOp;
 import ghidra.program.model.pcode.Varnode;
 import wasm.format.WasmFuncSignature;
+import wasm.format.sections.structures.WasmFuncType;
 
 public class PcodeOpEmitter {
 	static final String RAM = "ram";
+	static final String TABLE = "table0";
 
 	private HashMap<String, Varnode> nameToReg;
 	private ArrayList<PcodeOp> opList;
 	private SleighLanguage language;
 	private AddressSpace ramSpace;
+	private AddressSpace tableSpace;
 	private AddressSpace defSpace;
 	private AddressSpace constSpace;
 	private AddressSpace uniqueSpace;
@@ -112,6 +115,7 @@ public class PcodeOpEmitter {
 		opList = new ArrayList<PcodeOp>();
 		this.language = language;
 		ramSpace = language.getAddressFactory().getAddressSpace(RAM);
+		tableSpace = language.getAddressFactory().getAddressSpace(TABLE);
 		constSpace = language.getAddressFactory().getConstantSpace();
 		defSpace = language.getDefaultSpace();
 		uniqueSpace = language.getAddressFactory().getUniqueSpace();
@@ -155,6 +159,10 @@ public class PcodeOpEmitter {
 		in[0] = getAddress(a);
 		PcodeOp op = new PcodeOp(opAddress, seqnum++, PcodeOp.CALL, in);
 		opList.add(op);
+	}
+	
+	public void emitCallInd(Varnode v) {
+		opList.add(new PcodeOp(opAddress, seqnum++, PcodeOp.CALLIND, new Varnode[] { v }));
 	}
 	
 	/**
@@ -224,6 +232,20 @@ public class PcodeOpEmitter {
 		opList.add(op);
 	}
 	
+	public void emitPop32(String destName) {
+		Varnode out = findVarnode(destName, 4);
+		Varnode[] in = new Varnode[2];
+		in[0] = defSpaceId;
+		in[1] = spVarnode;
+		PcodeOp op = new PcodeOp(opAddress, seqnum++, PcodeOp.LOAD, in, out);
+		opList.add(op);
+		in = new Varnode[2];
+		in[0] = spVarnode;
+		in[1] = getConstant(8, spVarnode.getSize());
+		op = new PcodeOp(opAddress, seqnum++, PcodeOp.INT_ADD, in, spVarnode);
+		opList.add(op);
+	}
+	
 	public void emitMov64(String from, String to) {
 		Varnode[] src = new Varnode[] { findVarnode(from, 8) };
 		Varnode dest = findVarnode(to, 8);
@@ -238,6 +260,29 @@ public class PcodeOpEmitter {
 		opList.add(mov);
 	}
 	
+	public void emitBackupLocals(int nlocals) {
+		for(int i = 0; i < nlocals; i++) {
+			emitMov64("l" + i, "tmp" + i);
+		}
+		
+		emitMov32("SP", "tmpSP");
+	}
+	
+	public void emitRestoreLocals(int nlocals) {
+		for(int i = 0; i < nlocals; i++) {
+			emitMov64("tmp" + i, "l" + i);
+		}
+		
+		emitMov32("tmpSP", "SP");
+	}
+	
+	public void emitPopParams(int n) {
+		for(int i = 0; i < n; i++) {
+			String dest = "l" + (n - 1 - i); // values are popped off in reverse order
+			emitPop64(dest);
+		}
+	}
+	
 	public void emitCall(WasmFuncSignature target) {
 		int numParams = target.getParams().length;
 		int numReturns = target.getReturns().length;
@@ -248,39 +293,60 @@ public class PcodeOpEmitter {
 		if(target.getAddr() == null) {
 			throw new RuntimeException("Call target unresolved");
 		}
-		
+
 		//move existing locals into temp registers
-		for(int i = 0; i < numParams; i++) {
-			emitMov64("l" + i, "tmp" + i);
-		}
-		
-		emitMov32("SP", "tmpSP");
+		emitBackupLocals(numParams);
 		
 		//pop parameters from the stack into local registers
-		for(int i = 0; i < numParams; i++) {
-			String dest = "l" + (numParams - 1 - i); // values are popped off in reverse order
-			emitPop64(dest);
-		}
-		
-//		//push temp registers onto the stack
-//		for(int i = 0; i < numParams; i++) {
-//			String src = "tmp" + i;
-//			emitPush64(src);
-//		}
+		emitPopParams(numParams);
 		
 		//do the call
 		emitCall(target.getAddr());
 		
 		//restore previous local values
-		for(int i = 0; i < numParams; i++) {
-//			String dest = "l" + (numParams - 1 - i);
-//			emitPop64(dest);
-			emitMov64("tmp" + i, "l" + i);
-		}
-		
-		emitMov32("tmpSP", "SP");
+		emitRestoreLocals(numParams);
 		
 		//if there is a return value, push it onto the stack
+		if(numReturns == 1) {
+			emitPush64("ret0");
+		}
+	}
+	
+	//pops the function index and loads its address from the table
+	//result is stored in tmpFuncAddr
+	public Varnode emitGetIndirectFuncAddr() {
+		emitPop32("tmpFuncIdx");
+		Varnode v = findVarnode("tmpFuncIdx", 4);
+		
+		Varnode off = findVarnode("tmpFuncOff", 4);
+		opList.add(new PcodeOp(opAddress, seqnum++, PcodeOp.INT_MULT, new Varnode[] {
+				v, getConstant(8, 4)
+		}, off));
+		
+		Varnode res = findVarnode("tmpFuncAddr", 8);
+		opList.add(new PcodeOp(opAddress, seqnum++, PcodeOp.LOAD, new Varnode[] {
+				getConstant(tableSpace.getSpaceID(), 4), off
+		}, res));
+		
+		return res;
+	}
+	
+	public void emitCallIndirect(WasmFuncType type) {
+		int numParams = type.getParamTypes().length;
+		int numReturns = type.getReturnTypes().length;
+		if(numReturns > 1) {
+			throw new RuntimeException("Multiple returns not supported (yet)");
+		}
+		
+		emitBackupLocals(numParams);
+		Varnode funcAddr = emitGetIndirectFuncAddr();
+		
+		emitPopParams(numParams);
+		
+		emitCallInd(funcAddr);
+		
+		emitRestoreLocals(numParams);
+		
 		if(numReturns == 1) {
 			emitPush64("ret0");
 		}

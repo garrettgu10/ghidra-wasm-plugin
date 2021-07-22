@@ -1,7 +1,10 @@
 package wasm.pcodeInject;
 
+import ghidra.app.decompiler.DecompInterface;
+import ghidra.app.decompiler.DecompileOptions;
 import ghidra.app.plugin.processors.sleigh.SleighLanguage;
 import ghidra.program.model.lang.InjectContext;
+import ghidra.program.model.listing.Function;
 import ghidra.program.model.listing.Program;
 import ghidra.program.model.pcode.PcodeOp;
 import wasm.analysis.MetaInstruction;
@@ -10,6 +13,7 @@ import wasm.analysis.WasmFunctionAnalysis;
 
 public class InjectMeta extends InjectPayloadWasm{
 	MetaInstruction.Type opKind;
+	static boolean tested = false; // TODO: remove test var
 	
 	public InjectMeta(String sourceName, SleighLanguage language, long uniqBase, MetaInstruction.Type opKind) {
 		super(sourceName, language, uniqBase);
