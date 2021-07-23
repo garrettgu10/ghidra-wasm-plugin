@@ -22,7 +22,7 @@ public class WasmDataSegment implements StructConverter {
 		index = new Leb128(reader);
 		offset = reader.readNextInt();
 		size = new Leb128(reader);
-		data = reader.readNextByteArray(size.getValue());
+		data = reader.readNextByteArray((int)size.getValue());
 	}
 
 	@Override

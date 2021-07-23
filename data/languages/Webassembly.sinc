@@ -299,6 +299,11 @@ inc_indent: " . "^inc_indent is inc_indent [ indent_lvl = indent_lvl-1; ]{}
 	push64(val);
 }
 
+:" " is opc=0xff {
+	trap();
+	return [LR];
+}
+
 @include "BasicOps.sinc"
 
 #TODO: 0x3f

@@ -23,11 +23,11 @@ public class WasmFuncType implements StructConverter {
 		form = reader.readNextByte();
 		param_count = new Leb128(reader);
 		if (param_count.getValue() > 0) {
-			param_types = reader.readNextByteArray(param_count.getValue());			
+			param_types = reader.readNextByteArray((int)param_count.getValue());			
 		}
 		return_count = new Leb128(reader);
 		if (return_count.getValue() > 0) {
-			return_types = reader.readNextByteArray(return_count.getValue());			
+			return_types = reader.readNextByteArray((int)return_count.getValue());			
 		}
 	}
 	
@@ -50,11 +50,11 @@ public class WasmFuncType implements StructConverter {
 		structure.add(BYTE, 1, "form", null);
 		structure.add(param_count.toDataType(), param_count.toDataType().getLength(), "param_count", null);
 		if (param_count.getValue() > 0) {
-			structure.add(new ArrayDataType(BYTE, param_count.getValue(), 1), "param_types", null);
+			structure.add(new ArrayDataType(BYTE, (int)param_count.getValue(), 1), "param_types", null);
 		}
 		structure.add(return_count.toDataType(), return_count.toDataType().getLength(), "return_count", null);
 		if (return_count.getValue() > 0) {
-			structure.add(new ArrayDataType(BYTE, return_count.getValue(), 1), "return_types", null);
+			structure.add(new ArrayDataType(BYTE, (int)return_count.getValue(), 1), "return_types", null);
 		}
 		return structure;
 	}

@@ -26,9 +26,9 @@ public class WasmImportEntry implements StructConverter {
 	
 	public WasmImportEntry (BinaryReader reader) throws IOException {
 		module_len = new Leb128(reader);
-		module_str = reader.readNextAsciiString(module_len.getValue());
+		module_str = reader.readNextAsciiString((int)module_len.getValue());
 		field_len = new Leb128(reader);
-		field_str = reader.readNextAsciiString(field_len.getValue());
+		field_str = reader.readNextAsciiString((int)field_len.getValue());
 		kind = WasmExternalKind.values()[reader.readNextByte()];
 		switch(kind) {
 			case EXT_FUNCTION:
@@ -57,7 +57,7 @@ public class WasmImportEntry implements StructConverter {
 		if(kind != WasmExternalKind.EXT_FUNCTION) {
 			throw new RuntimeException("Cannot get function type of non-function import");
 		}
-		return function_type.getValue();
+		return (int)function_type.getValue();
 	}
 	
 	public String getName() {

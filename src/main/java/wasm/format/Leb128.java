@@ -38,10 +38,10 @@ public final class Leb128 implements StructConverter {
 	private Leb128() {
 	}
 	
-	public static int unsignedLeb128Size( int value ) {
+	public static int unsignedLeb128Size( long value ) {
 		// TODO: This could be much cleverer.
 
-		int remaining = value >> 7;
+		long remaining = value >> 7;
 		int count = 0;
 
 		while ( remaining != 0 ) {
@@ -198,7 +198,7 @@ public final class Leb128 implements StructConverter {
 		
 	}
 	
-	private int value;
+	private long value;
 	private int length;
 	
 	
@@ -208,7 +208,7 @@ public final class Leb128 implements StructConverter {
 		reader.readNextByteArray(length);// consume leb...
 	}
 	
-	public int getValue() {
+	public long getValue() {
 		return value;
 	} 
 	

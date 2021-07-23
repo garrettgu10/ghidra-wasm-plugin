@@ -26,7 +26,7 @@ public class WasmFunctionSection implements WasmPayload {
 	}
 	
 	public int getTypeIdx(int funcidx) {
-		return types.get(funcidx).getValue();
+		return (int)types.get(funcidx).getValue();
 	}
 	
 	public int getTypeCount() {

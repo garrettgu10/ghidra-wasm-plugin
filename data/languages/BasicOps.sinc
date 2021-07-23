@@ -101,31 +101,31 @@
 :""^indent^"i32.store8" memalign memoffset is opc=0x3A; memalign; memoffset; indent {
 	tostore:4 = 0;
 	pop32(tostore);
-	truncated:1 = tostore[0,7];
+	truncated:1 = tostore[0,8];
 	store8(memoffset, truncated);
 }
 :""^indent^"i32.store16" memalign memoffset is opc=0x3B; memalign; memoffset; indent {
 	tostore:4 = 0;
 	pop32(tostore);
-	truncated:2 = tostore[0,15];
+	truncated:2 = tostore[0,16];
 	store16(memoffset, truncated);
 }
 :""^indent^"i64.store8" memalign memoffset is opc=0x3C; memalign; memoffset; indent {
 	tostore:8 = 0;
 	pop64(tostore);
-	truncated:1 = tostore[0,7];
+	truncated:1 = tostore[0,8];
 	store8(memoffset, truncated);
 }
 :""^indent^"i64.store16" memalign memoffset is opc=0x3D; memalign; memoffset; indent {
 	tostore:8 = 0;
 	pop64(tostore);
-	truncated:2 = tostore[0,15];
+	truncated:2 = tostore[0,16];
 	store16(memoffset, truncated);
 }
 :""^indent^"i64.store32" memalign memoffset is opc=0x3E; memalign; memoffset; indent {
 	tostore:8 = 0;
 	pop64(tostore);
-	truncated:4 = tostore[0,31];
+	truncated:4 = tostore[0,32];
 	store32(memoffset, truncated);
 }
 :""^indent^"i32.eqz"  is opc=0x45; indent {
@@ -961,35 +961,35 @@
 :""^indent^"i32.extend8_s"  is opc=0xC0; indent {
 	x0:4 = 0;
 	pop32(x0);
-	singlebyte:1 = x0[0, 7];
+	singlebyte:1 = x0[0, 8];
 	res:4 = sext(singlebyte);
 	push32(res);
 }
 :""^indent^"i32.extend16_s"  is opc=0xC1; indent {
 	x0:4 = 0;
 	pop32(x0);
-	singleword:2 = x0[0, 15];
+	singleword:2 = x0[0, 16];
 	res:4 = sext(singleword);
 	push32(res);
 }
 :""^indent^"i64.extend8_s"  is opc=0xC2; indent {
 	x0:8 = 0;
 	pop64(x0);
-	singlebyte:1 = x0[0, 7];
+	singlebyte:1 = x0[0, 8];
 	res:8 = sext(singlebyte);
 	push64(res);
 }
 :""^indent^"i64.extend16_s"  is opc=0xC3; indent {
 	x0:8 = 0;
 	pop64(x0);
-	singleword:2 = x0[0, 15];
+	singleword:2 = x0[0, 16];
 	res:8 = sext(singleword);
 	push64(res);
 }
 :""^indent^"i64.extend32_s"  is opc=0xC4; indent {
 	x0:8 = 0;
 	pop64(x0);
-	dword:4 = x0[0, 31];
+	dword:4 = x0[0, 32];
 	res:8 = sext(dword);
 	push64(res);
 }

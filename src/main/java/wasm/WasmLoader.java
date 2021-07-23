@@ -57,6 +57,7 @@ import wasm.format.WasmEnums.WasmExternalKind;
 import wasm.format.sections.WasmCodeSection;
 import wasm.format.sections.WasmExportSection;
 import wasm.format.sections.WasmImportSection;
+import wasm.format.sections.WasmNameSection;
 import wasm.format.sections.WasmSection;
 import wasm.format.sections.WasmSection.WasmSectionId;
 import wasm.format.sections.structures.WasmExportEntry;
@@ -160,14 +161,21 @@ public class WasmLoader extends AbstractLibrarySupportLoader {
 		MemoryBlockUtils.createInitializedBlock(program, false, ".module", start, reader, length, "The full file contents of the Wasm module", MODULE_SOURCE_NAME, r, w, x, log, monitor);
 	}
 
-	private String getMethodName(WasmExportSection exports, int id) {
+	private String getMethodName(WasmNameSection names, WasmExportSection exports, int id) {
+		if(names != null) {
+			String name = names.getFunctionName(id);
+			if(name != null) {
+				return "wasm_" + name;
+			}
+		}
+		
 		if(exports != null) {
 			WasmExportEntry entry = exports.findMethod(id);
 			if (entry != null) {
-				return entry.getName();
+				return "wasm_" + entry.getName();
 			}
 		}
-		return "Method_" + id;
+		return "wasm_function_" + id;
 	}
 	
 	@Override
@@ -212,6 +220,7 @@ public class WasmLoader extends AbstractLibrarySupportLoader {
 						int imports_offset = imports == null? 0 : ((WasmImportSection)imports.getPayload()).getCount();
 						WasmSection exports = module.getSection(WasmSectionId.SEC_EXPORT);
 						String methodName = getMethodName(
+								module.getNameSection(),
 								exports == null? null: (WasmExportSection)exports.getPayload(), 
 								i + imports_offset);
 						program.getFunctionManager().createFunction(

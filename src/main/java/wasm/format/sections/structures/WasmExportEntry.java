@@ -30,7 +30,7 @@ public class WasmExportEntry implements StructConverter {
 
 	public WasmExportEntry (BinaryReader reader) throws IOException {
 		field_len = new Leb128(reader);
-		name = reader.readNextAsciiString(field_len.getValue());
+		name = reader.readNextAsciiString((int)field_len.getValue());
 		kind = WasmExternalKind.values()[reader.readNextByte()]; 
 		index = new Leb128(reader);
 	}
@@ -40,7 +40,7 @@ public class WasmExportEntry implements StructConverter {
 	}
 	
 	public int getIndex() {
-		return index.getValue();
+		return (int)index.getValue();
 	}
 	
 	public WasmExternalKind getType() {

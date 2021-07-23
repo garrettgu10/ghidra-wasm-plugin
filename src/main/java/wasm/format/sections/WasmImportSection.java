@@ -27,7 +27,7 @@ public class WasmImportSection implements WasmPayload {
 	}
 
 	public int getCount() {
-		return count.getValue();
+		return (int)count.getValue();
 	}
 	
 	public List<WasmImportEntry> getEntries() {

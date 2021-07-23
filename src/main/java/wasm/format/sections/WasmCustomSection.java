@@ -12,25 +12,34 @@ import wasm.format.Leb128;
 
 public class WasmCustomSection implements WasmPayload {
 	Leb128 namelen;
-	byte[] name;
+	String name;
 	byte[] contents;
 	
-	public WasmCustomSection (BinaryReader reader, int len) throws IOException {
+	protected WasmCustomSection (Leb128 namelen, String name, BinaryReader reader, int contentlen) throws IOException {
+		this.namelen = namelen;
+		this.name = name;
+		contents = reader.readNextByteArray(contentlen);
+	}
+	
+	public static WasmCustomSection create(BinaryReader reader, long len) throws IOException {
 		long readUntil = reader.getPointerIndex() + len;
 		
-		namelen = new Leb128(reader);
-		name = reader.readNextByteArray((int)namelen.getValue());
+		Leb128 namelen = new Leb128(reader);
+		String name = new String(reader.readNextByteArray((int)namelen.getValue()));
 		
 		int contentlen = (int)(readUntil - reader.getPointerIndex());
 		
-		contents = reader.readNextByteArray(contentlen);
+		if(name.equals("name")) {
+			return new WasmNameSection(namelen, name, reader, contentlen);
+		}
+		
+		return new WasmCustomSection(namelen, name, reader, contentlen);
 	}
-
 
 	@Override
 	public void addToStructure(Structure structure) throws IllegalArgumentException, DuplicateNameException, IOException {
 		structure.add(namelen.toDataType(), "name_len", null);
-		structure.add(StructConverter.STRING, name.length, "name", null);
+		structure.add(StructConverter.STRING, name.length(), "name", null);
 		structure.add(StructConverter.STRING, contents.length, "contents", null);
 	}
 

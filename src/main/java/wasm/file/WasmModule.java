@@ -10,6 +10,7 @@ import ghidra.program.model.data.DataType;
 import ghidra.util.exception.DuplicateNameException;
 import wasm.format.WasmConstants;
 import wasm.format.WasmHeader;
+import wasm.format.sections.WasmNameSection;
 import wasm.format.sections.WasmSection;
 
 public class WasmModule  {
@@ -22,6 +23,16 @@ public class WasmModule  {
 		while (reader.getPointerIndex() < reader.length()) {
 			sections.add(new WasmSection(reader));
 		}
+	}
+	
+	public WasmNameSection getNameSection() {
+		for(WasmSection section: sections) {
+			if(section.getId() == WasmSection.WasmSectionId.SEC_CUSTOM
+					&& section.getPayload() instanceof WasmNameSection) {
+				return (WasmNameSection)section.getPayload();
+			}
+		}
+		return null;
 	}
 
 	/*TODO: put sections to map*/

@@ -39,7 +39,7 @@ public class WasmSection implements StructConverter {
 	private static WasmPayload sectionsFactory(BinaryReader reader, WasmSectionId id, Leb128 len) throws IOException {
 		switch (id) {
 			case SEC_CUSTOM:
-				return new WasmCustomSection(reader, len.getValue());
+				return WasmCustomSection.create(reader, len.getValue());
 			case SEC_TYPE:
 				return new WasmTypeSection(reader);
 			case SEC_IMPORT:
@@ -69,13 +69,13 @@ public class WasmSection implements StructConverter {
 	
 	public WasmSection(BinaryReader reader) throws IOException {
 		section_offset = reader.getPointerIndex();
-		this.id = WasmSectionId.values()[new Leb128(reader).getValue()];
+		this.id = WasmSectionId.values()[(int)new Leb128(reader).getValue()];
 
 		this.payload_len = new Leb128(reader);
 
 		payload_offset = reader.getPointerIndex();
 		
-		byte payload_buf[] = reader.readNextByteArray(this.payload_len.getValue());
+		byte payload_buf[] = reader.readNextByteArray((int)this.payload_len.getValue());
 		
 		payload = WasmSection.sectionsFactory(new BinaryReader(new ByteArrayProvider(payload_buf), true), id, this.payload_len);
 		section_size = reader.getPointerIndex() - section_offset;
