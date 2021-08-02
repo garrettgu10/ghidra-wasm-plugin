@@ -165,17 +165,17 @@ public class WasmLoader extends AbstractLibrarySupportLoader {
 		if(names != null) {
 			String name = names.getFunctionName(id);
 			if(name != null) {
-				return "wasm_" + name;
+				return "_" + name;
 			}
 		}
 		
 		if(exports != null) {
 			WasmExportEntry entry = exports.findMethod(id);
 			if (entry != null) {
-				return "wasm_" + entry.getName();
+				return "_" + entry.getName();
 			}
 		}
-		return "wasm_function_" + id;
+		return "unnamed_function_" + id;
 	}
 	
 	@Override
