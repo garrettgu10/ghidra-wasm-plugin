@@ -11,5 +11,5 @@ TODO:
 - [x] Parse type section
 - [x] Convert type definitions to Ghidra function signatures (skipped, might be better to just let the decompiler infer)
 - [x] Handle function call sites
-- [ ] Table/ref instructions
-- [ ] `br_table` disassembly
+- [x] Table/ref instructions
+- [ ] `br_table` disassembly + decompilation
