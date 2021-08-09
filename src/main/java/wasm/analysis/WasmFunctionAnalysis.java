@@ -42,6 +42,10 @@ public class WasmFunctionAnalysis {
 
 	}
 	
+	public Function getFunction() {
+		return function;
+	}
+	
 	public void collectMeta(MetaInstruction meta) {
 		metas.add(meta);
 	}
@@ -132,10 +136,7 @@ public class WasmFunctionAnalysis {
 			case RETURN:
 				if(valueStackDepth != 0) {
 					if(valueStackDepth != 1) {
-						for(MetaInstruction meta: metas) {
-							System.out.println(meta);
-						}
-						throw new RuntimeException("Too many items on stack at return");
+						throw new RuntimeException("Too many items on stack at return (entry point " + function.getEntryPoint() + ")");
 					}
 					ReturnMetaInstruction ret = (ReturnMetaInstruction) instr;
 					ret.returnsVal = true;

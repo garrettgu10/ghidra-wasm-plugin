@@ -26,13 +26,14 @@ import wasm.format.sections.structures.WasmFuncType;
 import wasm.format.sections.structures.WasmImportEntry;
 
 public class WasmAnalysis {
-	private static HashMap<Program, WasmAnalysis> states = new HashMap<>();
+	private static HashMap<String, WasmAnalysis> states = new HashMap<>();
 	public static WasmAnalysis getState(Program p) {
-		if(!states.containsKey(p)) {
+		String key = p.getExecutableSHA256();
+		if(!states.containsKey(key)) {
 			System.out.println("Creating new analysis state for "+p.getName());
-			states.put(p, new WasmAnalysis(p));
+			states.put(key, new WasmAnalysis(p));
 		}
-		return states.get(p);
+		return states.get(key);
 	}
 	
 	private Program program;
