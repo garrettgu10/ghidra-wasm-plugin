@@ -1,0 +1,18 @@
+br_table_items: "" is br_table_count=0 {}
+br_table_items: ULeb128^" "^br_table_items is ULeb128; br_table_items [ br_table_count = br_table_count - 1; ]{}
+
+:""^indent^"br_table" br_table_items is opc=0x0e; topbit = 0 & v0 ; br_table_items; indent
+	[ br_table_count = 1 + (0 | v0); ]
+unimpl
+:""^indent^"br_table" br_table_items is opc=0x0e; topbit = 1 & v0; topbit = 0 & v1 ; br_table_items; indent
+	[ br_table_count = 1 + (0 | v0 | ( v1 << 7 )); ]
+unimpl
+:""^indent^"br_table" br_table_items is opc=0x0e; topbit = 1 & v0; topbit = 1 & v1; topbit = 0 & v2 ; br_table_items; indent
+	[ br_table_count = 1 + (0 | v0 | ( v1 << 7 ) | ( v2 << 14 )); ]
+unimpl
+:""^indent^"br_table" br_table_items is opc=0x0e; topbit = 1 & v0; topbit = 1 & v1; topbit = 1 & v2; topbit = 0 & v3 ; br_table_items; indent
+	[ br_table_count = 1 + (0 | v0 | ( v1 << 7 ) | ( v2 << 14 ) | ( v3 << 21 )); ]
+unimpl
+:""^indent^"br_table" br_table_items is opc=0x0e; topbit = 1 & v0; topbit = 1 & v1; topbit = 1 & v2; topbit = 1 & v3; topbit = 0 & v4 ; br_table_items; indent
+	[ br_table_count = 1 + (0 | v0 | ( v1 << 7 ) | ( v2 << 14 ) | ( v3 << 21 ) | ( v4 << 28 )); ]
+unimpl

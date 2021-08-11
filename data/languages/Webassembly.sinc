@@ -118,6 +118,8 @@ define pcodeop ctz;
 define pcodeop br_if;
 define pcodeop rotl;
 define pcodeop rotr;
+define pcodeop memory_size;
+define pcodeop memory_grow;
 
 define pcodeop funcref;
 
@@ -165,6 +167,8 @@ inc_indent: " . "^inc_indent is inc_indent [ indent_lvl = indent_lvl-1; ]{}
 
 @define INC_INDENT "inc_indent [ indent_lvl = indent_lvl + 1; globalset(inst_next, indent_lvl); ]"
 
+@include "br_table.sinc"
+
 :""^indent^"unreachable" is opc=0x00; indent {
 	trap();
 }
@@ -203,8 +207,6 @@ inc_indent: " . "^inc_indent is inc_indent [ indent_lvl = indent_lvl-1; ]{}
 	if(val == 0) goto inst_next;
 	brCallOther();
 }
-#TODO: br_table
-#:""^indent^"br_table" is opc=0x0e; ULeb128; indent [br_table_count=ULeb128;] unimpl
 :""^indent^"return" is opc=0x0f; indent {
 	returnCallOther();
 }
@@ -228,6 +230,16 @@ inc_indent: " . "^inc_indent is inc_indent [ indent_lvl = indent_lvl-1; ]{}
 :""^indent^"ref.func" ULeb128 is opc=0xd2; ULeb128; indent {
 	val:8 = funcref(ULeb128);
 	push64(val);
+}
+:""^indent^"memory.size" is opc=0x3f; indent {
+	val:4 = memory_size();
+	push32(val);
+}
+:""^indent^"memory.grow" is opc=0x40; indent {
+	new_sz:4 = 0;
+	pop32(new_sz);
+	val:4 = memory_grow(new_sz);
+	push32(val);
 }
 
 :""^indent^"drop" is opc=0x1a; indent {
@@ -289,13 +301,13 @@ inc_indent: " . "^inc_indent is inc_indent [ indent_lvl = indent_lvl-1; ]{}
 	*[table0] (ULeb128:4 * 8) = val;
 }
 
-:""^indent^"i32.const" ULeb128 is opc=0x41; ULeb128; indent {
-	val:4 = ULeb128:4;
+:""^indent^"i32.const" SLeb128 is opc=0x41; SLeb128; indent {
+	val:4 = SLeb128:4;
 	push32(val);
 }
 
-:""^indent^"i64.const" ULeb128 is opc=0x42; ULeb128; indent {
-	val:8 = ULeb128:8;
+:""^indent^"i64.const" SLeb128 is opc=0x42; SLeb128; indent {
+	val:8 = SLeb128:8;
 	push64(val);
 }
 
