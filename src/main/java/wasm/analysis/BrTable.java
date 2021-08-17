@@ -1,9 +1,9 @@
 package wasm.analysis;
 
 public class BrTable {
-	private int[] cases;
+	private BrTarget[] cases;
 	
-	public BrTable(int[] cases) {
+	public BrTable(BrTarget[] cases) {
 		this.cases = cases;
 	}
 	
@@ -11,7 +11,7 @@ public class BrTable {
 		return cases.length - 1; // default case
 	}
 	
-	public int[] getCases() {
+	public BrTarget[] getCases() {
 		return cases;
 	}
 }

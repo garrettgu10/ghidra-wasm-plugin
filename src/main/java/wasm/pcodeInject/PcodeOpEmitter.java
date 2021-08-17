@@ -28,6 +28,8 @@ import ghidra.program.model.address.AddressSpace;
 import ghidra.program.model.lang.Register;
 import ghidra.program.model.pcode.PcodeOp;
 import ghidra.program.model.pcode.Varnode;
+import wasm.analysis.BrTable;
+import wasm.analysis.BrTarget;
 import wasm.format.WasmFuncSignature;
 import wasm.format.sections.structures.WasmFuncType;
 
@@ -163,6 +165,46 @@ public class PcodeOpEmitter {
 	
 	public void emitCallInd(Varnode v) {
 		opList.add(new PcodeOp(opAddress, seqnum++, PcodeOp.CALLIND, new Varnode[] { v }));
+	}
+	
+	public void emitBrTable(BrTable tbl) {
+		emitPop32("tmpBrIdx");
+		Varnode brIdx = findVarnode("tmpBrIdx", 4);
+		Varnode tmpSP = findVarnode("tmpSP", 8);
+		opList.add(new PcodeOp(opAddress, seqnum++, PcodeOp.COPY, 
+				new Varnode[] { spVarnode }, tmpSP));
+		
+		BrTarget[] cases = tbl.getCases();
+		
+		for(int i = 0; i < tbl.numCases(); i++) {
+			BrTarget target = cases[i];
+			Varnode takeBranch = findVarnode("tmpTakeBranch", 1);
+			Varnode constComparator = getConstant((long)i, 4);
+			Varnode subFromSP = getConstant((long)(target.getNumPops() * 8), 8); //this is how many bytes we should implicitly pop
+			Varnode branchDest = getAddress(target.getDest());
+			
+			opList.add(new PcodeOp(opAddress, seqnum++, PcodeOp.INT_EQUAL,
+				new Varnode[] { brIdx, constComparator }, takeBranch));
+			// takeBranch = brIdx == constComparator;
+			opList.add(new PcodeOp(opAddress, seqnum++, PcodeOp.INT_SUB,
+				new Varnode[] { tmpSP, subFromSP }, spVarnode ));
+			// SP = tmpSP - subFromSP;
+			opList.add(new PcodeOp(opAddress, seqnum++, PcodeOp.CBRANCH,
+				new Varnode[] { branchDest, takeBranch }));
+			// if takeBranch goto branchDest
+		}
+		
+		//default case
+		BrTarget defaultTarget = cases[cases.length - 1];
+		Varnode subFromSP = getConstant((long)(defaultTarget.getNumPops() * 8), 8); 
+		Varnode defaultDest = getAddress(defaultTarget.getDest());
+		
+		opList.add(new PcodeOp(opAddress, seqnum++, PcodeOp.INT_SUB,
+				new Varnode[] { tmpSP, subFromSP }, spVarnode ));
+		// SP = tmpSP - subFromSP;
+		opList.add(new PcodeOp(opAddress, seqnum++, PcodeOp.BRANCH,
+			new Varnode[] { defaultDest }));
+		// goto defaultDest
 	}
 	
 	/**

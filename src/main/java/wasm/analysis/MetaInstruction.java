@@ -96,7 +96,9 @@ public abstract class MetaInstruction {
 				res = new CallIndirectMetaInstruction((int)typeIdx);
 				break;
 			case BR_TABLE:
-				//TODO
+				int[] rawCases = readRawBrTable(p, con.baseAddr);
+				res = new BrTableMetaInstruction(rawCases);
+				break;
 			}
 			
 			if(res != null) {
@@ -124,7 +126,7 @@ public abstract class MetaInstruction {
 				.getValue();
 	}
 	
-	public static BrTable readBrTable(Program p, Address brAddress) throws MemoryAccessException {
+	public static int[] readRawBrTable(Program p, Address brAddress) throws MemoryAccessException {
 		Address nextAddr = brAddress.add(1);
 		Leb128 numCases = readLeb128(p, nextAddr);
 		nextAddr = nextAddr.add(numCases.getSize());
@@ -139,7 +141,7 @@ public abstract class MetaInstruction {
 		
 		res[res.length - 1] = (int)readLeb128(p, nextAddr).getValue(); // the default case
 		
-		return new BrTable(res);
+		return res;
 	}
 	
 	public abstract Type getType();
@@ -342,8 +344,7 @@ class ReturnMetaInstruction extends MetaInstruction {
 }
 
 class BrMetaInstruction extends MetaInstruction {
-	int implicitPops = 0;
-	BranchDest target = null;
+	BrTarget target;
 	int level;
 	
 	public BrMetaInstruction(int lvl) {
@@ -352,16 +353,16 @@ class BrMetaInstruction extends MetaInstruction {
 	
 	@Override
 	public String toString() {
-		return super.toString() + " BR (pops " + implicitPops + ") (dest " + target + ")";
+		return super.toString() + " BR (dest " + target + ")";
 	}
 	
 	@Override
 	public void synthesize(PcodeOpEmitter pcode) {
-		if(implicitPops != 0) {
-			pcode.emitPopn(implicitPops);			
+		if(target.implicitPops != 0) {
+			pcode.emitPopn(target.implicitPops);
 		}
 		
-		pcode.emitJump(target.getBranchDest());
+		pcode.emitJump(target.getDest());
 	}
 
 	@Override
@@ -419,15 +420,22 @@ class CallIndirectMetaInstruction extends MetaInstruction {
 }
 
 class BrTableMetaInstruction extends MetaInstruction {
+	int[] rawCases;
+	
 	BrTable table;
 	
-	public BrTableMetaInstruction(BrTable t) {
-		this.table = t;
+	public BrTableMetaInstruction(int[] rawCases) {
+		this.rawCases = rawCases;
 	}
 	
 	@Override
 	public String toString() {
 		return super.toString() + " BR_TABLE (dest " + table + ")";
+	}
+	
+	@Override
+	public void synthesize(PcodeOpEmitter pcode) {
+		pcode.emitBrTable(table);
 	}
 
 	@Override
