@@ -37,68 +37,15 @@ import ghidra.util.exception.DuplicateNameException;
 public final class Leb128 implements StructConverter {
 	private Leb128() {
 	}
-	
-	public static int unsignedLeb128Size( long value ) {
-		// TODO: This could be much cleverer.
 
-		long remaining = value >> 7;
-		int count = 0;
-
-		while ( remaining != 0 ) {
-			remaining >>= 7;
-			count++;
-		}
-
-		return count + 1;
-	}
-
-	/**
-	 * Gets the number of bytes in the signed LEB128 encoding of the given value.
-	 * 
-	 * @param value
-	 *            the value in question
-	 * @return its write size, in bytes
-	 */
-	public static int signedLeb128Size( int value ) {
-		// TODO: This could be much cleverer.
-
-		int remaining = value >> 7;
-		int count = 0;
-		boolean hasMore = true;
-		int end = ( ( value & Integer.MIN_VALUE ) == 0 ) ? 0 : -1;
-
-		while ( hasMore ) {
-			hasMore = ( remaining != end ) || ( ( remaining & 1 ) != ( ( value >> 6 ) & 1 ) );
-
-			value = remaining;
-			remaining >>= 7;
-			count++;
-		}
-
-		return count;
-
-		// ByteArrayOutputStream out = new ByteArrayOutputStream( );
-		// int remaining = value >>> 7;
-		//
-		// while ( remaining != 0 ) {
-		// out.write( ( byte ) ( ( value & 0x7f ) | 0x80 ) );
-		// value = remaining;
-		// remaining >>>= 7;
-		// }
-		//
-		// out.write( ( byte ) ( value & 0x7f ) );
-		//
-		// return out.toByteArray( ).length;
-	}
-
-	public static int readSignedLeb128( byte [] bytes ) {
+	public static Leb128 readSignedLeb128( byte [] bytes ) {
 		return readSignedLeb128( new ByteArrayInputStream( bytes ) );
 	}
 
 	/**
 	 * Reads an signed integer from {@code in}.
 	 */
-	public static int readSignedLeb128( ByteArrayInputStream in ) {
+	public static Leb128 readSignedLeb128( ByteArrayInputStream in ) {
 		int result = 0;
 		int cur;
 		int count = 0;
@@ -110,29 +57,25 @@ public final class Leb128 implements StructConverter {
 			signBits <<= 7;
 			count++;
 		}
-		while ( ( ( cur & 0x80 ) == 0x80 ) && count < 5 );
-
-		if ( ( cur & 0x80 ) == 0x80 ) {
-			throw new DexException( "invalid LEB128 sequence" );
-		}
+		while ( ( cur & 0x80 ) == 0x80 );
 
 		// Sign extend if appropriate
 		if ( ( ( signBits >> 1 ) & result ) != 0 ) {
 			result |= signBits;
 		}
 
-		return result;
+		return new Leb128(result, count);
 	}
 
-	public static int readUnsignedLeb128( byte [] bytes ) {
+	public static Leb128 readUnsignedLeb128( byte [] bytes ) {
 		return readUnsignedLeb128( new ByteArrayInputStream( bytes ) );
 	}
 
 	/**
 	 * Reads an unsigned integer from {@code in}.
 	 */
-	public static int readUnsignedLeb128( ByteArrayInputStream in ) {
-		int result = 0;
+	public static Leb128 readUnsignedLeb128( ByteArrayInputStream in ) {
+		long result = 0;
 		int cur;
 		int count = 0;
 
@@ -141,13 +84,9 @@ public final class Leb128 implements StructConverter {
 			result |= ( cur & 0x7f ) << ( count * 7 );
 			count++;
 		}
-		while ( ( ( cur & 0x80 ) == 0x80 ) && count < 5 );
+		while ( ( cur & 0x80 ) == 0x80 );
 
-		if ( ( cur & 0x80 ) == 0x80 ) {
-			throw new DexException( "invalid LEB128 sequence" );
-		}
-
-		return result;
+		return new Leb128(result, count);
 	}
 
 	/**
@@ -201,10 +140,15 @@ public final class Leb128 implements StructConverter {
 	private long value;
 	private int length;
 	
+	private Leb128(long value, int length) {
+		this.value = value;
+		this.length = length;
+	}
 	
 	public Leb128(BinaryReader reader) throws IOException {
-		value = Leb128.readUnsignedLeb128( reader.readByteArray( reader.getPointerIndex( ), (int) Math.min(5, reader.length() - reader.getPointerIndex())));
-		length = Leb128.unsignedLeb128Size(value);
+		Leb128 v = Leb128.readUnsignedLeb128( reader.readByteArray( reader.getPointerIndex( ), (int) Math.min(5, reader.length() - reader.getPointerIndex())));
+		value = v.getValue();
+		length = v.getSize();
 		reader.readNextByteArray(length);// consume leb...
 	}
 	

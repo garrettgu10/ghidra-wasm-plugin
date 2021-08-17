@@ -25,7 +25,8 @@ public abstract class MetaInstruction {
 		BR,
 		RETURN,
 		CALL,
-		CALL_INDIRECT
+		CALL_INDIRECT,
+		BR_TABLE
 	}
 	
 	Address location;
@@ -94,6 +95,8 @@ public abstract class MetaInstruction {
 				long typeIdx = getLeb128Operand(p, con.baseAddr);
 				res = new CallIndirectMetaInstruction((int)typeIdx);
 				break;
+			case BR_TABLE:
+				//TODO
 			}
 			
 			if(res != null) {
@@ -108,12 +111,35 @@ public abstract class MetaInstruction {
 		return null;
 	}
 	
+	private static Leb128 readLeb128(Program p, Address startAddr) throws MemoryAccessException {
+		byte[] buf = new byte[10];
+		p.getMemory().getBytes(startAddr, buf);
+		return Leb128.readUnsignedLeb128(buf);
+	}
+	
 	//We have to do this since we cannot resolve non-constant varnode inputs to our CallOther instruction
 	//But ULeb128 creates a reference varnode in sleigh
 	public static long getLeb128Operand(Program p, Address brAddress) throws MemoryAccessException {
-		byte[] buf = new byte[16];
-		p.getMemory().getBytes(brAddress.add(1), buf); //add 1 to go past the opcode
-		return Leb128.readUnsignedLeb128(buf);
+		return readLeb128(p, brAddress.add(1)) //skip the opcode
+				.getValue();
+	}
+	
+	public static BrTable readBrTable(Program p, Address brAddress) throws MemoryAccessException {
+		Address nextAddr = brAddress.add(1);
+		Leb128 numCases = readLeb128(p, nextAddr);
+		nextAddr = nextAddr.add(numCases.getSize());
+		
+		int[] res = new int[(int)numCases.getValue() + 1]; //one extra for the default case
+		
+		for(int i = 0; i < numCases.getValue(); i++) {
+			Leb128 newCase = readLeb128(p, nextAddr);
+			nextAddr = nextAddr.add(newCase.getSize());
+			res[i] = (int)newCase.getValue();
+		}
+		
+		res[res.length - 1] = (int)readLeb128(p, nextAddr).getValue(); // the default case
+		
+		return new BrTable(res);
 	}
 	
 	public abstract Type getType();
@@ -389,5 +415,23 @@ class CallIndirectMetaInstruction extends MetaInstruction {
 	@Override
 	public Type getType() {
 		return Type.CALL_INDIRECT;
+	}
+}
+
+class BrTableMetaInstruction extends MetaInstruction {
+	BrTable table;
+	
+	public BrTableMetaInstruction(BrTable t) {
+		this.table = t;
+	}
+	
+	@Override
+	public String toString() {
+		return super.toString() + " BR_TABLE (dest " + table + ")";
+	}
+
+	@Override
+	public Type getType() {
+		return Type.BR_TABLE;
 	}
 }
