@@ -2,6 +2,7 @@ package wasm.format.sections;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import ghidra.app.util.bin.BinaryReader;
@@ -25,6 +26,10 @@ public class WasmDataSection implements WasmPayload {
 			dataSegments.add(new WasmDataSegment(reader));
 		}
 
+	}
+
+	public List<WasmDataSegment> getSegments() {
+		return Collections.unmodifiableList(dataSegments);
 	}
 
 	@Override

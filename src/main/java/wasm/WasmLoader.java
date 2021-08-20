@@ -30,6 +30,7 @@ import ghidra.app.util.opinion.LoadSpec;
 import ghidra.app.util.opinion.QueryOpinionService;
 import ghidra.app.util.opinion.QueryResult;
 import ghidra.framework.model.DomainObject;
+import ghidra.program.database.mem.FileBytes;
 import ghidra.program.model.address.Address;
 import ghidra.program.model.address.AddressOverflowException;
 import ghidra.program.model.address.AddressSet;
@@ -55,16 +56,17 @@ import wasm.format.WasmConstants;
 import wasm.format.WasmHeader;
 import wasm.format.WasmEnums.WasmExternalKind;
 import wasm.format.sections.WasmCodeSection;
+import wasm.format.sections.WasmDataSection;
 import wasm.format.sections.WasmExportSection;
 import wasm.format.sections.WasmImportSection;
 import wasm.format.sections.WasmNameSection;
 import wasm.format.sections.WasmSection;
 import wasm.format.sections.WasmSection.WasmSectionId;
 import wasm.format.sections.structures.WasmExportEntry;
+import wasm.format.sections.structures.WasmDataSegment;
 import wasm.format.sections.structures.WasmFunctionBody;
 import wasm.format.sections.structures.WasmImportEntry;
 import wasm.format.sections.structures.WasmLocalEntry.WasmLocalType;
-import wasm.format.sections.WasmSection.WasmSectionId;;
 /**
  * TODO: Provide class-level documentation that describes what this loader does.
  */
@@ -200,10 +202,13 @@ public class WasmLoader extends AbstractLibrarySupportLoader {
 			markupHeader(program, module.getHeader(), monitor, inputStream, log);
 			markupSections(program, module, monitor, inputStream, log);
 			monitor.setMessage( "Wasm Loader: Create byte code" );
+
+			FileBytes fileBytes = MemoryBlockUtils.createFileBytes(program, provider, 0, provider.length(), monitor);
 			
 			for (WasmSection section : module.getSections()) {
 				monitor.setMessage("Loaded " + section.getId().toString());
-				if (section.getId() == WasmSectionId.SEC_CODE) {
+				switch(section.getId()) {
+				case SEC_CODE: {
 					WasmCodeSection codeSection = (WasmCodeSection)section.getPayload();
 					long code_offset = section.getPayloadOffset();
 					for (int i = 0; i < codeSection.getFunctions().size(); ++i) {
@@ -228,7 +233,23 @@ public class WasmLoader extends AbstractLibrarySupportLoader {
 								new AddressSet(methodAddress, methodend), SourceType.ANALYSIS);
 						program.getSymbolTable().createLabel(methodAddress, methodName, SourceType.ANALYSIS);
 					}
-				}else if(section.getId() == WasmSectionId.SEC_IMPORT) {
+					break;
+				}
+				case SEC_DATA: {
+					WasmDataSection dataSection = (WasmDataSection)section.getPayload();
+					log.appendMsg("SEC_DATA");
+					List<WasmDataSegment> dataSegments = dataSection.getSegments();
+					for(int i=0; i<dataSegments.size(); i++) {
+						WasmDataSegment dataSegment = dataSegments.get(i);
+						long offset = dataSegment.getOffset();
+						if(offset == -1)
+							continue;
+						long fileOffset = dataSegment.getFileOffset() + section.getPayloadOffset();
+						Address dataStart = program.getAddressFactory().getAddressSpace("mem0").getAddress(offset);
+						program.getMemory().createInitializedBlock(".data" + i, dataStart, fileBytes, fileOffset, dataSegment.getSize(), false);
+					}
+				}
+				case SEC_IMPORT: {
 					WasmImportSection importSection = (WasmImportSection)section.getPayload();
 					createImportStubBlock(program, importSection.getCount() * Utils.IMPORT_STUB_LEN, monitor);
 					int nextFuncIdx = 0;
@@ -249,6 +270,8 @@ public class WasmLoader extends AbstractLibrarySupportLoader {
 						
 						nextFuncIdx++;
 					}
+					break;
+				}
 				}
 			}
 		} catch (Exception e) {
