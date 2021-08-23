@@ -4,18 +4,18 @@ import java.io.IOException;
 
 import ghidra.app.util.bin.BinaryReader;
 import ghidra.app.util.bin.ByteArrayProvider;
-import ghidra.app.util.bin.ByteProvider;
 import ghidra.app.util.bin.StructConverter;
+import ghidra.app.util.bin.format.dwarf4.LEB128;
+import ghidra.program.model.data.ArrayDataType;
 import ghidra.program.model.data.DataType;
 import ghidra.program.model.data.Structure;
 import ghidra.program.model.data.StructureDataType;
 import ghidra.util.exception.DuplicateNameException;
-import wasm.format.Leb128;
 
 public class WasmSection implements StructConverter {
 	
 	private WasmSectionId id;
-	private Leb128 payload_len;
+	private LEB128 payload_len;
 	private long section_size;
 	private long section_offset;
 	private WasmPayload payload;
@@ -36,10 +36,10 @@ public class WasmSection implements StructConverter {
 		SEC_DATA
 	}
 	
-	private static WasmPayload sectionsFactory(BinaryReader reader, WasmSectionId id, Leb128 len) throws IOException {
+	private static WasmPayload sectionsFactory(BinaryReader reader, WasmSectionId id, LEB128 len) throws IOException {
 		switch (id) {
 			case SEC_CUSTOM:
-				return WasmCustomSection.create(reader, len.getValue());
+				return WasmCustomSection.create(reader, len.asUInt32());
 			case SEC_TYPE:
 				return new WasmTypeSection(reader);
 			case SEC_IMPORT:
@@ -69,13 +69,13 @@ public class WasmSection implements StructConverter {
 	
 	public WasmSection(BinaryReader reader) throws IOException {
 		section_offset = reader.getPointerIndex();
-		this.id = WasmSectionId.values()[(int)new Leb128(reader).getValue()];
+		this.id = WasmSectionId.values()[LEB128.readAsUInt32(reader)];
 
-		this.payload_len = new Leb128(reader);
+		this.payload_len = LEB128.readUnsignedValue(reader);
 
 		payload_offset = reader.getPointerIndex();
 		
-		byte payload_buf[] = reader.readNextByteArray((int)this.payload_len.getValue());
+		byte payload_buf[] = reader.readNextByteArray(this.payload_len.asUInt32());
 		
 		payload = WasmSection.sectionsFactory(new BinaryReader(new ByteArrayProvider(payload_buf), true), id, this.payload_len);
 		section_size = reader.getPointerIndex() - section_offset;
@@ -85,7 +85,7 @@ public class WasmSection implements StructConverter {
 	public DataType toDataType() throws DuplicateNameException, IOException {
 		Structure structure = new StructureDataType(payload.getName(), 0);
 		structure.add(BYTE, 1, "id", null);
-		structure.add(payload_len.toDataType(), payload_len.getSize(), "size", null);
+		structure.add(new ArrayDataType(BYTE, payload_len.getLength(), BYTE.getLength()), "size", null);
 		payload.addToStructure(structure);
 		return structure;
 	}

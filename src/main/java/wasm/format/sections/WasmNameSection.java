@@ -7,14 +7,13 @@ import java.util.Map;
 
 import ghidra.app.util.bin.BinaryReader;
 import ghidra.app.util.bin.ByteArrayProvider;
-import ghidra.app.util.bin.ByteProvider;
-import wasm.format.Leb128;
+import ghidra.app.util.bin.format.dwarf4.LEB128;
 
 public class WasmNameSection extends WasmCustomSection {
 	String moduleName = "None";
 	HashMap<Integer, String> functionNames = new HashMap<>();
 
-	public WasmNameSection(Leb128 namelen, String name, BinaryReader r, int contentlen) throws IOException {
+	public WasmNameSection(LEB128 namelen, String name, BinaryReader r, int contentlen) throws IOException {
 		super(namelen, name, r, contentlen);
 		BinaryReader reader = new BinaryReader(new ByteArrayProvider(this.contents), true);
 		while(reader.getPointerIndex() < this.contents.length) {
@@ -23,12 +22,12 @@ public class WasmNameSection extends WasmCustomSection {
 	}
 	
 	private String readName(BinaryReader reader) throws IOException {
-		long len = new Leb128(reader).getValue();
+		long len = LEB128.readAsLong(reader, false);
 		return new String(reader.readNextByteArray((int)len));
 	}
 	
 	private Map.Entry<Integer, String> readAssoc(BinaryReader reader) throws IOException {
-		int idx = (int)new Leb128(reader).getValue();
+		int idx = LEB128.readAsUInt32(reader);
 		String name = readName(reader);
 		
 		return new AbstractMap.SimpleEntry<>(idx, name);
@@ -36,7 +35,7 @@ public class WasmNameSection extends WasmCustomSection {
 	
 	private void readSubsection(BinaryReader reader) throws IOException {
 		byte sectionId = reader.readNextByte();
-		long size = new Leb128(reader).getValue();
+		long size = LEB128.readAsLong(reader, false);
 		byte[] subContents = reader.readNextByteArray((int)size);
 		BinaryReader subReader = new BinaryReader(new ByteArrayProvider(subContents), true);
 		switch(sectionId) {
@@ -47,7 +46,7 @@ public class WasmNameSection extends WasmCustomSection {
 			//no handling yet
 			return;
 		case 1: //function name section
-			long numAssoc = new Leb128(subReader).getValue();
+			long numAssoc = LEB128.readAsLong(subReader, false);
 			for(int i = 0; i < numAssoc; i++) {
 				Map.Entry<Integer, String> assoc = readAssoc(subReader);
 				functionNames.put(assoc.getKey(), assoc.getValue());

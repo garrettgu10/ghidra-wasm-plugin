@@ -8,7 +8,6 @@ import ghidra.program.model.data.DataType;
 import ghidra.program.model.data.Structure;
 import ghidra.program.model.data.StructureDataType;
 import ghidra.util.exception.DuplicateNameException;
-import wasm.format.Leb128;
 
 public class WasmTableType implements StructConverter {
 

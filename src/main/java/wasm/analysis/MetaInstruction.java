@@ -1,13 +1,14 @@
 package wasm.analysis;
 
+import java.io.IOException;
 import java.util.ArrayList;
 
+import ghidra.app.util.bin.format.dwarf4.LEB128;
 import ghidra.program.model.address.Address;
 import ghidra.program.model.lang.InjectContext;
 import ghidra.program.model.listing.Program;
 import ghidra.program.model.mem.MemoryAccessException;
 import ghidra.program.model.pcode.Varnode;
-import wasm.format.Leb128;
 import wasm.format.WasmFuncSignature;
 import wasm.format.sections.structures.WasmFuncType;
 import wasm.pcodeInject.PcodeHelper;
@@ -113,7 +114,11 @@ public abstract class MetaInstruction {
 	public static long getLeb128Operand(Program p, Address brAddress) throws MemoryAccessException {
 		byte[] buf = new byte[16];
 		p.getMemory().getBytes(brAddress.add(1), buf); //add 1 to go past the opcode
-		return Leb128.readUnsignedLeb128(buf);
+		try {
+			return LEB128.decode(buf,false);
+		} catch (IOException e) {
+			throw new MemoryAccessException("Error while decoding leb128 :"+e.getMessage());
+		}
 	}
 	
 	public abstract Type getType();

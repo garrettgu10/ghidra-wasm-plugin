@@ -1,21 +1,22 @@
 package wasm.format.sections;
 
+import static ghidra.app.util.bin.StructConverter.BYTE;
+
 import java.io.IOException;
 
 import ghidra.app.util.bin.BinaryReader;
 import ghidra.app.util.bin.StructConverter;
-import ghidra.program.model.data.DataType;
+import ghidra.app.util.bin.format.dwarf4.LEB128;
+import ghidra.program.model.data.ArrayDataType;
 import ghidra.program.model.data.Structure;
-import ghidra.program.model.data.StructureDataType;
 import ghidra.util.exception.DuplicateNameException;
-import wasm.format.Leb128;
 
 public class WasmCustomSection implements WasmPayload {
-	Leb128 namelen;
+	LEB128 namelen;
 	String name;
 	byte[] contents;
 	
-	protected WasmCustomSection (Leb128 namelen, String name, BinaryReader reader, int contentlen) throws IOException {
+	protected WasmCustomSection (LEB128 namelen, String name, BinaryReader reader, int contentlen) throws IOException {
 		this.namelen = namelen;
 		this.name = name;
 		contents = reader.readNextByteArray(contentlen);
@@ -24,8 +25,8 @@ public class WasmCustomSection implements WasmPayload {
 	public static WasmCustomSection create(BinaryReader reader, long len) throws IOException {
 		long readUntil = reader.getPointerIndex() + len;
 		
-		Leb128 namelen = new Leb128(reader);
-		String name = new String(reader.readNextByteArray((int)namelen.getValue()));
+		LEB128 namelen = LEB128.readUnsignedValue(reader);
+		String name = new String(reader.readNextByteArray((int)namelen.asInt32()));
 		
 		int contentlen = (int)(readUntil - reader.getPointerIndex());
 		
@@ -38,7 +39,7 @@ public class WasmCustomSection implements WasmPayload {
 
 	@Override
 	public void addToStructure(Structure structure) throws IllegalArgumentException, DuplicateNameException, IOException {
-		structure.add(namelen.toDataType(), "name_len", null);
+		structure.add( new ArrayDataType( BYTE, namelen.getLength(), BYTE.getLength( ) ), "name_len", null );
 		structure.add(StructConverter.STRING, name.length(), "name", null);
 		structure.add(StructConverter.STRING, contents.length, "contents", null);
 	}
