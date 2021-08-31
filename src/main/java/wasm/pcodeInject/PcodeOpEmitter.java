@@ -306,8 +306,6 @@ public class PcodeOpEmitter {
 		for(int i = 0; i < nlocals; i++) {
 			emitMov64("l" + i, "tmp" + i);
 		}
-		
-		emitMov32("SP", "tmpSP");
 	}
 	
 	public void emitRestoreLocals(int nlocals) {
@@ -341,6 +339,8 @@ public class PcodeOpEmitter {
 		
 		//pop parameters from the stack into local registers
 		emitPopParams(numParams);
+		
+		emitMov32("SP", "tmpSP");
 		
 		//do the call
 		emitCall(target.getAddr());
