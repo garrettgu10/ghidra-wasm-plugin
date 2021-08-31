@@ -63,6 +63,39 @@ public class WasmFunctionAnalysis {
 		}
 		return null;
 	}
+	
+	private static BrTarget getTarget(int level, ArrayList<MetaInstruction> controlStack, int valueStackDepth) {
+		MetaInstruction targetInstr = controlStack.get(controlStack.size() - 1 - level);
+		BranchDest target;
+		int implicitPops;
+		
+		switch(targetInstr.getType()) {
+		case BEGIN_BLOCK:
+		case IF:
+			//jump to the end of the corresponding block
+			target = (BranchDest)targetInstr;
+			implicitPops = 0;
+			break;
+		case BEGIN_LOOP:
+			//jump back to the beginning of the loop and pop everything that's been pushed since the start
+			target = (BranchDest)targetInstr;
+			BeginLoopMetaInstruction loop = (BeginLoopMetaInstruction)target;
+			implicitPops = valueStackDepth - loop.stackDepthAtStart;
+			break;
+		default:
+			throw new RuntimeException("Invalid item on control stack " + targetInstr);
+		}
+		
+		return new BrTarget(target, implicitPops);
+	}
+	
+	private static BrTable getBrTable(int[] rawCases, ArrayList<MetaInstruction> controlStack, int valueStackDepth) {
+		BrTarget[] cases = new BrTarget[rawCases.length];
+		for(int i = 0; i < rawCases.length; i++) {
+			cases[i] = getTarget(rawCases[i], controlStack, valueStackDepth);
+		}
+		return new BrTable(cases);
+	}
 
 	//Resolve branch targets, implicit pops, call instructions to make them ready for pcode synthesis
 	public void performResolution() {
@@ -87,23 +120,7 @@ public class WasmFunctionAnalysis {
 				break;
 			case BR:
 				BrMetaInstruction br = (BrMetaInstruction)instr;
-				MetaInstruction target = controlStack.get(controlStack.size() - 1 - br.level);
-				switch(target.getType()) {
-				case BEGIN_BLOCK:
-				case IF:
-					//jump to the end of the corresponding block
-					br.target = (BranchDest)target;
-					br.implicitPops = 0;
-					break;
-				case BEGIN_LOOP:
-					//jump back to the beginning of the loop and pop everything that's been pushed since the start
-					br.target = (BranchDest)target;
-					BeginLoopMetaInstruction loop = (BeginLoopMetaInstruction)target;
-					br.implicitPops = valueStackDepth - loop.stackDepthAtStart;
-					break;
-				default:
-					throw new RuntimeException("Invalid item on control stack " + target);
-				}
+				br.target = getTarget(br.level, controlStack, valueStackDepth);
 				break;
 			case ELSE:
 				IfMetaInstruction ifStmt = (IfMetaInstruction) controlStack.get(controlStack.size() - 1);
@@ -136,7 +153,8 @@ public class WasmFunctionAnalysis {
 			case RETURN:
 				if(valueStackDepth != 0) {
 					if(valueStackDepth != 1) {
-						throw new RuntimeException("Too many items on stack at return (entry point " + function.getEntryPoint() + ")");
+						System.out.println(metas);
+						throw new RuntimeException("Too many items on stack at return (at " + instr.location + ")");
 					}
 					ReturnMetaInstruction ret = (ReturnMetaInstruction) instr;
 					ret.returnsVal = true;
@@ -159,6 +177,12 @@ public class WasmFunctionAnalysis {
 				valueStackDepth--;
 				valueStackDepth -= type.getParamTypes().length;
 				valueStackDepth += type.getReturnTypes().length;
+				break;
+			case BR_TABLE:
+				BrTableMetaInstruction brTableInstr = (BrTableMetaInstruction) instr;
+				valueStackDepth--;
+				brTableInstr.table = getBrTable(brTableInstr.rawCases, controlStack, valueStackDepth);
+				break;
 			}
 		}
 	}

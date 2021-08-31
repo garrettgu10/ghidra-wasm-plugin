@@ -267,4 +267,8 @@
   	<pcode dynamic="true">
   	</pcode>
   </callotherfixup>
+  <callotherfixup targetop="brTableCallOther">
+  	<pcode dynamic="true">
+  	</pcode>
+  </callotherfixup>
 </compiler_spec>

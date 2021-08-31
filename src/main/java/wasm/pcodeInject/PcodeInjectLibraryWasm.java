@@ -23,6 +23,7 @@ public class PcodeInjectLibraryWasm extends PcodeInjectLibrary{
 	public static final String RETURN = "returnCallOther";
 	public static final String CALL = "callCallOther";
 	public static final String CALL_INDIRECT = "callIndirectCallOther";
+	public static final String BR_TABLE = "brTableCallOther";
 	
 	public static final String SOURCENAME = "wasmsource";
 	
@@ -51,6 +52,7 @@ public class PcodeInjectLibraryWasm extends PcodeInjectLibrary{
 		implementedOps.put(RETURN, new InjectMeta(SOURCENAME, l, getNextUniqueBase(), MetaInstruction.Type.RETURN));
 		implementedOps.put(CALL, new InjectMeta(SOURCENAME, l, getNextUniqueBase(), MetaInstruction.Type.CALL));
 		implementedOps.put(CALL_INDIRECT, new InjectMeta(SOURCENAME, l, getNextUniqueBase(), MetaInstruction.Type.CALL_INDIRECT));
+		implementedOps.put(BR_TABLE, new InjectMeta(SOURCENAME, l, getNextUniqueBase(), MetaInstruction.Type.BR_TABLE));
 	}
 	
 	@Override
