@@ -1,3 +1,5 @@
+Note: This plugin is no longer actively maintained. Please visit https://github.com/nneonneo/ghidra-wasm-plugin/ for a more updated version of this plugin :-)
+
 Module to load WebAssembly files into Ghidra, supporting disassembly and decompilation.
 
 This plugin borrows loader functionality from this repo: https://github.com/andr3colonel/ghidra_wasm
