@@ -26,6 +26,7 @@ define pcodeop ifCallOther;
 define pcodeop elseCallOther;
 define pcodeop returnCallOther;
 define pcodeop callIndirectCallOther;
+define pcodeop brTableCallOther;
 
 macro push32(val32) {
 	pushCallOther(32:4);
